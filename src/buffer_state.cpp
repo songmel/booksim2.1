@@ -573,7 +573,9 @@ void BufferState::ProcessCredit( Credit const * const c )
 {
   assert( c );
 
-  set<int>::iterator iter = c->vc.begin();
+  // set<int>::iterator iter = c->vc.begin();
+  // OPT4
+  Credit::VCSet::const_iterator iter = c->vc.begin();
   while(iter != c->vc.end()) {
 
     int const vc = *iter;

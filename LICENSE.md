@@ -1,6 +1,8 @@
 Copyright (c) 2007-2015, Trustees of The Leland Stanford Junior
 University
 
+Copyright (c) 2026, Hwanjin Song, KAIST CSNL (BookSim 2.1 modifications)
+
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without

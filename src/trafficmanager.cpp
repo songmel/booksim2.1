@@ -36,6 +36,7 @@
 #include "booksim_config.hpp"
 #include "trafficmanager.hpp"
 #include "batchtrafficmanager.hpp"
+#include "ringallreducetrafficmanager.hpp"
 #include "random_utils.hpp" 
 #include "vc.hpp"
 #include "packet_reply_info.hpp"
@@ -49,6 +50,8 @@ TrafficManager * TrafficManager::New(Configuration const & config,
         result = new TrafficManager(config, net);
     } else if(sim_type == "batch") {
         result = new BatchTrafficManager(config, net);
+    } else if(sim_type == "allreduce") {
+        result = new RingAllReduceTrafficManager(config, net);
     } else {
         cerr << "Unknown simulation type: " << sim_type << endl;
     } 
@@ -64,6 +67,11 @@ TrafficManager::TrafficManager( const Configuration &config, const vector<Networ
 
     _vcs = config.GetInt("num_vcs");
     _subnets = config.GetInt("subnets");
+
+    // OPT2
+    #if OPT2
+        _cycle_ejected_flits.assign(_subnets, vector<Flit *>(_nodes, NULL));
+    #endif
  
     _subnet.resize(Flit::NUM_FLIT_TYPES);
     _subnet[Flit::READ_REQUEST] = config.GetInt("read_request_subnet");
@@ -644,13 +652,33 @@ void TrafficManager::_RetireFlit( Flit *f, int dest )
 {
     _deadlock_timer = 0;
 
-    assert(_total_in_flight_flits[f->cl].count(f->id) > 0);
-    _total_in_flight_flits[f->cl].erase(f->id);
+    // assert(_total_in_flight_flits[f->cl].count(f->id) > 0);
+    // _total_in_flight_flits[f->cl].erase(f->id);
   
-    if(f->record) {
-        assert(_measured_in_flight_flits[f->cl].count(f->id) > 0);
-        _measured_in_flight_flits[f->cl].erase(f->id);
-    }
+    // if(f->record) {
+    //     assert(_measured_in_flight_flits[f->cl].count(f->id) > 0);
+    //     _measured_in_flight_flits[f->cl].erase(f->id);
+    // }
+    // OPT1
+    #if OPT1
+        auto total = _total_in_flight_flits[f->cl].find(f->id);
+        assert(total != _total_in_flight_flits[f->cl].end());
+        _total_in_flight_flits[f->cl].erase(total);
+    #else
+        assert(_total_in_flight_flits[f->cl].count(f->id) > 0);
+        _total_in_flight_flits[f->cl].erase(f->id);
+    #endif
+
+        if(f->record) {
+    #if OPT1
+            auto measured = _measured_in_flight_flits[f->cl].find(f->id);
+            assert(measured != _measured_in_flight_flits[f->cl].end());
+            _measured_in_flight_flits[f->cl].erase(measured);
+    #else
+            assert(_measured_in_flight_flits[f->cl].count(f->id) > 0);
+            _measured_in_flight_flits[f->cl].erase(f->id);
+    #endif
+        }
 
     if ( f->watch ) { 
         *gWatchOut << GetSimTime() << " | "
@@ -683,7 +711,9 @@ void TrafficManager::_RetireFlit( Flit *f, int dest )
         if(f->head) {
             head = f;
         } else {
-            map<int, Flit *>::iterator iter = _retired_packets[f->cl].find(f->pid);
+            // map<int, Flit *>::iterator iter = _retired_packets[f->cl].find(f->pid);
+            // OPT1
+            FlitMap::iterator iter = _retired_packets[f->cl].find(f->pid);
             assert(iter != _retired_packets[f->cl].end());
             head = iter->second;
             _retired_packets[f->cl].erase(iter);
@@ -783,15 +813,17 @@ int TrafficManager::_IssuePacket( int source, int cl )
 }
 
 void TrafficManager::_GeneratePacket( int source, int stype, 
-                                      int cl, int time )
+                                      int cl, int time,
+                                      int destination, int flit_count )
 {
     assert(stype!=0);
 
     Flit::FlitType packet_type = Flit::ANY_TYPE;
-    int size = _GetNextPacketSize(cl); //input size 
+    int size = flit_count > 0 ? flit_count : _GetNextPacketSize(cl);
     int pid = _cur_pid++;
     assert(_cur_pid);
-    int packet_destination = _traffic_pattern[cl]->dest(source);
+    int packet_destination = destination >= 0 ? destination :
+                            _traffic_pattern[cl]->dest(source);
     bool record = false;
     bool watch = gWatchOut && (_packets_to_watch.count(pid) > 0);
     if(_use_read_write[cl]){
@@ -951,7 +983,7 @@ void TrafficManager::_Inject(){
     }
 }
 
-void TrafficManager::_Step( )
+void TrafficManager::_Step()
 {
     bool flits_in_flight = false;
     for(int c = 0; c < _classes; ++c) {
@@ -962,11 +994,18 @@ void TrafficManager::_Step( )
         cout << "WARNING: Possible network deadlock.\n";
     }
 
-    vector<map<int, Flit *> > flits(_subnets);
+    // OPT2
+    #if !OPT2
+        vector<map<int, Flit *> > flits(_subnets);
+    #endif
   
     for ( int subnet = 0; subnet < _subnets; ++subnet ) {
         for ( int n = 0; n < _nodes; ++n ) {
             Flit * const f = _net[subnet]->ReadFlit( n );
+            // OPT2
+            #if OPT2
+                _cycle_ejected_flits[subnet][n] = f;
+            #endif
             if ( f ) {
                 if(f->watch) {
                     *gWatchOut << GetSimTime() << " | "
@@ -976,7 +1015,10 @@ void TrafficManager::_Step( )
                                << " from VC " << f->vc
                                << "." << endl;
                 }
-                flits[subnet].insert(make_pair(n, f));
+                // OPT2
+                #if !OPT2
+                    flits[subnet].insert(make_pair(n, f));
+                #endif
                 if((_sim_state == warming_up) || (_sim_state == running)) {
                     ++_accepted_flits[f->cl][n];
                     if(f->tail) {
@@ -988,7 +1030,9 @@ void TrafficManager::_Step( )
             Credit * const c = _net[subnet]->ReadCredit( n );
             if ( c ) {
 #ifdef TRACK_FLOWS
-                for(set<int>::const_iterator iter = c->vc.begin(); iter != c->vc.end(); ++iter) {
+                // for(set<int>::const_iterator iter = c->vc.begin(); iter != c->vc.end(); ++iter) {
+                // OPT4
+                for(Credit::VCSet::const_iterator iter = c->vc.begin(); iter != c->vc.end(); ++iter) {
                     int const vc = *iter;
                     assert(!_outstanding_classes[n][subnet][vc].empty());
                     int cl = _outstanding_classes[n][subnet][vc].front();
@@ -1238,10 +1282,15 @@ void TrafficManager::_Step( )
 
     for(int subnet = 0; subnet < _subnets; ++subnet) {
         for(int n = 0; n < _nodes; ++n) {
+// OPT2
+#if OPT2
+            Flit * const f = _cycle_ejected_flits[subnet][n];
+            if(f) {
+#else
             map<int, Flit *>::const_iterator iter = flits[subnet].find(n);
             if(iter != flits[subnet].end()) {
                 Flit * const f = iter->second;
-
+#endif
                 f->atime = _time;
                 if(f->watch) {
                     *gWatchOut << GetSimTime() << " | "
@@ -1261,7 +1310,10 @@ void TrafficManager::_Step( )
                 _RetireFlit(f, n);
             }
         }
+// OPT2
+#if !OPT2
         flits[subnet].clear();
+#endif
         _net[subnet]->Evaluate( );
         _net[subnet]->WriteOutputs( );
     }
@@ -1384,7 +1436,9 @@ void TrafficManager::_DisplayRemaining( ostream & os ) const
 {
     for(int c = 0; c < _classes; ++c) {
 
-        map<int, Flit *>::const_iterator iter;
+        // map<int, Flit *>::const_iterator iter;
+        // OPT1
+        FlitMap::const_iterator iter;
         int i;
 
         os << "Class " << c << ":" << endl;
@@ -1467,7 +1521,9 @@ bool TrafficManager::_SingleSim( )
             double latency = (double)_plat_stats[c]->Sum();
             double count = (double)_plat_stats[c]->NumSamples();
       
-            map<int, Flit *>::const_iterator iter;
+            // map<int, Flit *>::const_iterator iter;
+            // OPT1
+            FlitMap::const_iterator iter;
             for(iter = _total_in_flight_flits[c].begin(); 
                 iter != _total_in_flight_flits[c].end(); 
                 iter++) {
@@ -1572,7 +1628,9 @@ bool TrafficManager::_SingleSim( )
                         double acc_latency = _plat_stats[c]->Sum();
                         double acc_count = (double)_plat_stats[c]->NumSamples();
 	    
-                        map<int, Flit *>::const_iterator iter;
+                        // map<int, Flit *>::const_iterator iter;
+                        // OPT1
+                        FlitMap::const_iterator iter;
                         for(iter = _total_in_flight_flits[c].begin(); 
                             iter != _total_in_flight_flits[c].end(); 
                             iter++) {

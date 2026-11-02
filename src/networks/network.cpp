@@ -48,6 +48,9 @@
 #include "anynet.hpp"
 #include "dragonfly.hpp"
 
+// OPT
+#include "implementation_opts.hpp"
+
 
 Network::Network( const Configuration &config, const string & name ) :
   TimedModule( 0, name )
@@ -188,13 +191,28 @@ void Network::ReadInputs( )
   }
 }
 
+// void Network::Evaluate( )
+// {
+//   for(deque<TimedModule *>::const_iterator iter = _timed_modules.begin();
+//       iter != _timed_modules.end();
+//       ++iter) {
+//     (*iter)->Evaluate( );
+//   }
+// }
+// OPT5
 void Network::Evaluate( )
 {
+#if OPT5
+  // Channel<T>::Evaluate is empty for both flit and credit channels.
+  // Keep all router evaluations, in their original order.
+  for(auto router : _routers) router->Evaluate();
+#else
   for(deque<TimedModule *>::const_iterator iter = _timed_modules.begin();
       iter != _timed_modules.end();
       ++iter) {
     (*iter)->Evaluate( );
   }
+#endif
 }
 
 void Network::WriteOutputs( )

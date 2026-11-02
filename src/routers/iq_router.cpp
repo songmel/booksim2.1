@@ -52,6 +52,11 @@ IQRouter::IQRouter( Configuration const & config, Module *parent,
 : Router( config, parent, name, id, inputs, outputs ), _active(false)
 {
   _vcs         = config.GetInt( "num_vcs" );
+  // OPT3
+  #if OPT3
+    _in_queue_flits.reserve(_inputs);
+    _out_queue_credits.assign(_inputs, NULL);
+  #endif
 
   _vc_busy_when_full = (config.GetInt("vc_busy_when_full") > 0);
   _vc_prioritize_empty = (config.GetInt("vc_prioritize_empty") > 0);
@@ -310,7 +315,13 @@ bool IQRouter::_ReceiveFlits( )
 		   << " from channel at input " << input
 		   << "." << endl;
       }
+// _in_queue_flits.insert(make_pair(input, f));
+// OPT3
+#if OPT3
+      _in_queue_flits.push_back(make_pair(input, f));
+#else
       _in_queue_flits.insert(make_pair(input, f));
+#endif
       activity = true;
     }
   }
@@ -338,7 +349,9 @@ bool IQRouter::_ReceiveCredits( )
 
 void IQRouter::_InputQueuing( )
 {
-  for(map<int, Flit *>::const_iterator iter = _in_queue_flits.begin();
+  // for(map<int, Flit *>::const_iterator iter = _in_queue_flits.begin();
+  // OPT3
+  for(InputFlitQueue::const_iterator iter = _in_queue_flits.begin();
       iter != _in_queue_flits.end();
       ++iter) {
 
@@ -437,7 +450,9 @@ void IQRouter::_InputQueuing( )
     BufferState * const dest_buf = _next_buf[output];
     
 #ifdef TRACK_FLOWS
-    for(set<int>::const_iterator iter = c->vc.begin(); iter != c->vc.end(); ++iter) {
+    // for(set<int>::const_iterator iter = c->vc.begin(); iter != c->vc.end(); ++iter) {
+    // OPT4
+    for(Credit::VCSet::const_iterator iter = c->vc.begin(); iter != c->vc.end(); ++iter) {
       int const vc = *iter;
       assert(!_outstanding_classes[output][vc].empty());
       int cl = _outstanding_classes[output][vc].front();
@@ -1122,11 +1137,18 @@ void IQRouter::_SWHoldUpdate( )
       dest_buf->SendingFlit(f);
 
       _crossbar_flits.push_back(make_pair(-1, make_pair(f, make_pair(expanded_input, expanded_output))));
-      
+
+// OPT3
+#if OPT3
+      Credit *& credit = _out_queue_credits[input];
+      if(!credit) credit = Credit::New();
+      credit->vc.insert(vc);
+#else
       if(_out_queue_credits.count(input) == 0) {
 	_out_queue_credits.insert(make_pair(input, Credit::New()));
       }
       _out_queue_credits.find(input)->second->vc.insert(vc);
+#endif
       
       if(cur_buf->Empty(vc)) {
 	if(f->watch) {
@@ -2033,10 +2055,17 @@ void IQRouter::_SWAllocUpdate( )
 
       _crossbar_flits.push_back(make_pair(-1, make_pair(f, make_pair(expanded_input, expanded_output))));
 
+// OPT3
+#if OPT3
+      Credit *& credit = _out_queue_credits[input];
+      if(!credit) credit = Credit::New();
+      credit->vc.insert(vc);
+#else
       if(_out_queue_credits.count(input) == 0) {
-	_out_queue_credits.insert(make_pair(input, Credit::New()));
+        _out_queue_credits.insert(make_pair(input, Credit::New()));
       }
       _out_queue_credits.find(input)->second->vc.insert(vc);
+#endif
 
       if(cur_buf->Empty(vc)) {
 	if(f->tail) {
@@ -2214,8 +2243,36 @@ void IQRouter::_SwitchUpdate( )
 // output queuing
 //------------------------------------------------------------------------------
 
+// void IQRouter::_OutputQueuing( )
+// {
+//   for(map<int, Credit *>::const_iterator iter = _out_queue_credits.begin();
+//       iter != _out_queue_credits.end();
+//       ++iter) {
+
+//     int const input = iter->first;
+//     assert((input >= 0) && (input < _inputs));
+
+//     Credit * const c = iter->second;
+//     assert(c);
+//     assert(!c->vc.empty());
+
+//     _credit_buffer[input].push(c);
+//   }
+//   _out_queue_credits.clear();
+// }
+// OPT3
 void IQRouter::_OutputQueuing( )
 {
+#if OPT3
+  for(int input = 0; input < _inputs; ++input) {
+    Credit *c = _out_queue_credits[input];
+    if(c) {
+      assert(!c->vc.empty());
+      _credit_buffer[input].push(c);
+      _out_queue_credits[input] = NULL;
+    }
+  }
+#else
   for(map<int, Credit *>::const_iterator iter = _out_queue_credits.begin();
       iter != _out_queue_credits.end();
       ++iter) {
@@ -2230,6 +2287,7 @@ void IQRouter::_OutputQueuing( )
     _credit_buffer[input].push(c);
   }
   _out_queue_credits.clear();
+#endif
 }
 
 //------------------------------------------------------------------------------

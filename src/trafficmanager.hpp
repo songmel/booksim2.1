@@ -44,6 +44,12 @@
 #include "outputset.hpp"
 #include "injection.hpp"
 
+// OPT
+#include "implementation_opts.hpp"
+
+// OPT1
+#include "flit_map.hpp"
+
 //register the requests to a node
 class PacketReplyInfo;
 
@@ -112,10 +118,26 @@ protected:
   vector<vector<int> > _qtime;
   vector<vector<bool> > _qdrained;
   vector<vector<list<Flit *> > > _partial_packets;
+  
+  // vector<map<int, Flit *> > _total_in_flight_flits;
+  // vector<map<int, Flit *> > _measured_in_flight_flits;
+  // vector<map<int, Flit *> > _retired_packets;
+  // OPT1
+  #if OPT1
+    typedef FlatFlitMap FlitMap;
+  #else
+    typedef map<int, Flit *> FlitMap;
+  #endif
 
-  vector<map<int, Flit *> > _total_in_flight_flits;
-  vector<map<int, Flit *> > _measured_in_flight_flits;
-  vector<map<int, Flit *> > _retired_packets;
+    vector<FlitMap> _total_in_flight_flits;
+    vector<FlitMap> _measured_in_flight_flits;
+    vector<FlitMap> _retired_packets;
+
+  // OPT2
+  #if OPT2
+    vector<vector<Flit *> > _cycle_ejected_flits;
+  #endif
+
   bool _empty_network;
 
   bool _hold_switch_for_packet;
@@ -264,13 +286,14 @@ protected:
 
   virtual void _RetireFlit( Flit *f, int dest );
 
-  void _Inject();
+  virtual void _Inject();
   void _Step( );
 
   bool _PacketsOutstanding( ) const;
   
   virtual int  _IssuePacket( int source, int cl );
-  void _GeneratePacket( int source, int size, int cl, int time );
+  void _GeneratePacket( int source, int stype, int cl, int time,
+                        int destination = -1, int flit_count = -1 );
 
   virtual void _ClearStats( );
 

@@ -37,6 +37,9 @@
 #include "router.hpp"
 #include "routefunc.hpp"
 
+// OPT
+#include "implementation_opts.hpp"
+
 using namespace std;
 
 class VC;
@@ -67,7 +70,14 @@ class IQRouter : public Router {
   int _vc_alloc_delay;
   int _sw_alloc_delay;
   
-  map<int, Flit *> _in_queue_flits;
+  // map<int, Flit *> _in_queue_flits;
+  // OPT3
+  #if OPT3
+    typedef vector<pair<int, Flit *> > InputFlitQueue;
+  #else
+    typedef map<int, Flit *> InputFlitQueue;
+  #endif
+  InputFlitQueue _in_queue_flits;
 
   deque<pair<int, pair<Credit *, int> > > _proc_credits;
 
@@ -78,7 +88,13 @@ class IQRouter : public Router {
 
   deque<pair<int, pair<Flit *, pair<int, int> > > > _crossbar_flits;
 
-  map<int, Credit *> _out_queue_credits;
+  // map<int, Credit *> _out_queue_credits;
+  // OPT3
+  #if OPT3
+    vector<Credit *> _out_queue_credits;
+  #else
+    map<int, Credit *> _out_queue_credits;
+  #endif
 
   vector<Buffer *> _buf;
   vector<BufferState *> _next_buf;

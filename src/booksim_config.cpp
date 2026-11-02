@@ -186,6 +186,12 @@ BookSimConfig::BookSimConfig( )
 
   _int_map["batch_size"] = 1000;
   _int_map["batch_count"] = 1;
+
+  // Finite, dependency-driven 1D Ring AllReduce (one collective per run).
+  _int_map["allreduce_bytes"] = 1048576; // 1 MiB; 16 KiB/chunk on 64 ranks
+  _int_map["flit_bytes"] = 16;
+  _int_map["max_packet_flits"] = 8;
+  _int_map["allreduce_max_cycles"] = 10000000;
   _int_map["max_outstanding_requests"] = 0; // 0 = unlimited
 
   // Use read/write request reply scheme

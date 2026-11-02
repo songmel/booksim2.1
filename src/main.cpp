@@ -183,5 +183,8 @@ int main( int argc, char **argv )
   /*configure and run the simulator
    */
   bool result = Simulate( config );
+#if OPT_ALL
+  cout << "This is optimized version of BookSim2.0" << endl;
+#endif
   return result ? -1 : 0;
 }

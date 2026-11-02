@@ -31,11 +31,52 @@
 #include <set>
 #include <stack>
 
+// OPT
+#include <vector>
+#include <algorithm>
+#include "implementation_opts.hpp"
+
+// OPT4
+#if OPT4
+// Same sorted/unique iteration as std::set; keep its tiny storage across reuse.
+class CreditVCSet {
+  std::vector<int> _values;
+
+public:
+  typedef std::vector<int>::iterator iterator;
+  typedef std::vector<int>::const_iterator const_iterator;
+
+  CreditVCSet() { _values.reserve(4); }
+
+  void insert(int vc) {
+    iterator it = std::lower_bound(_values.begin(), _values.end(), vc);
+    if(it == _values.end() || *it != vc) _values.insert(it, vc);
+  }
+
+  void clear() { _values.clear(); }
+  bool empty() const { return _values.empty(); }
+  size_t size() const { return _values.size(); }
+
+  iterator begin() { return _values.begin(); }
+  iterator end() { return _values.end(); }
+  const_iterator begin() const { return _values.begin(); }
+  const_iterator end() const { return _values.end(); }
+};
+#endif
+
+
 class Credit {
 
 public:
 
-  set<int> vc;
+  // set<int> vc;
+  // OPT4
+#if OPT4
+  typedef CreditVCSet VCSet;
+#else
+  typedef std::set<int> VCSet;
+#endif
+  VCSet vc;
 
   // these are only used by the event router
   bool head, tail;

@@ -27,13 +27,26 @@
 LEX = flex
 YACC   = bison -y
 DEFINE = 
+
+OPT1 ?= 1
+OPT2 ?= 1
+OPT3 ?= 1
+OPT4 ?= 1
+OPT5 ?= 1
+
 INCPATH = -I. -Iarbiters -Iallocators -Irouters -Inetworks -Ipower
 CPPFLAGS += -Wall $(INCPATH) $(DEFINE)
 CPPFLAGS += -O3
 CPPFLAGS += -g
+CPPFLAGS += -DOPT1=$(OPT1)
+CPPFLAGS += -DOPT2=$(OPT2)
+CPPFLAGS += -DOPT3=$(OPT3)
+CPPFLAGS += -DOPT4=$(OPT4)
+CPPFLAGS += -DOPT5=$(OPT5)
 LFLAGS +=
 
 PROG := booksim
+OPT_CONFIG := .opt_config
 
 # simulator source files
 CPP_SRCS = $(wildcard *.cpp) $(wildcard */*.cpp)
@@ -50,9 +63,17 @@ YACC_OBJS = y.tab.o
 
 OBJS :=  $(CPP_OBJS) $(LEX_OBJS) $(YACC_OBJS)
 
-.PHONY: clean
+.PHONY: all clean FORCE
 
 all: $(PROG)
+
+# Change the timestamp only when the build mode changes. All objects depend on
+# this file, so switching OPT_ALL or OPT1 rebuilds without requiring clean.
+$(OPT_CONFIG): FORCE
+	@printf '%s\n' 'OPT1=$(OPT1)' 'OPT2=$(OPT2)' 'OPT3=$(OPT3)' 'OPT4=$(OPT4)' 'OPT5=$(OPT5)' > $@.tmp
+	@if cmp -s $@.tmp $@; then rm -f $@.tmp; else mv -f $@.tmp $@; fi
+
+FORCE:
 
 $(PROG): $(OBJS)
 	 $(CXX) $(LFLAGS) $^ -o $@
@@ -72,12 +93,15 @@ $(YACC_OBJS): $(YACC_SRCS)
 %.o: %.cpp
 	$(CXX) $(CPPFLAGS) -MMD -c $< -o $@
 
+$(OBJS): $(OPT_CONFIG)
+
 clean:
 	rm -f $(YACC_SRCS) $(YACC_HDRS)
 	rm -f $(LEX_SRCS)
 	rm -f $(CPP_DEPS)
 	rm -f $(OBJS)
 	rm -f $(PROG)
+	rm -f $(OPT_CONFIG) $(OPT_CONFIG).tmp
 
 distclean: clean
 	rm -f *~ */*~
