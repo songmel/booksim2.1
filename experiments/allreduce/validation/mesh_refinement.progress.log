@@ -1,0 +1,53 @@
+Both simulator working trees and Makefiles are unchanged.
+screen native_1vc_packet256B ring2d r1 baseline: starting
+  core CPU estimate=18.4984s, cycles=187676
+screen native_1vc_packet256B ring2d r1 optimized: starting
+  core CPU estimate=13.5209s, cycles=187676
+  PAIR native_1vc_packet256B ring2d: 1.3681x; all comparisons passed
+screen native_1vc_packet512B ring2d r1 baseline: starting
+  core CPU estimate=17.1013s, cycles=160429
+screen native_1vc_packet512B ring2d r1 optimized: starting
+  core CPU estimate=12.4588s, cycles=160429
+  PAIR native_1vc_packet512B ring2d: 1.3726x; all comparisons passed
+screen native_1vc_packet1024B ring2d r1 baseline: starting
+  core CPU estimate=16.6284s, cycles=148416
+screen native_1vc_packet1024B ring2d r1 optimized: starting
+  core CPU estimate=12.2940s, cycles=148416
+  PAIR native_1vc_packet1024B ring2d: 1.3526x; all comparisons passed
+confirmation native_1vc_packet512B ring1d r1 baseline: starting
+  core CPU estimate=11.8393s, cycles=161532
+confirmation native_1vc_packet512B ring1d r1 optimized: starting
+  core CPU estimate=7.7159s, cycles=161532
+  PAIR native_1vc_packet512B ring1d: 1.5344x; all comparisons passed
+confirmation native_1vc_packet512B ring1d r2 optimized: starting
+  core CPU estimate=7.6927s, cycles=161532
+confirmation native_1vc_packet512B ring1d r2 baseline: starting
+  core CPU estimate=11.8597s, cycles=161532
+  PAIR native_1vc_packet512B ring1d: 1.5417x; all comparisons passed
+confirmation native_1vc_packet512B ring1d r3 baseline: starting
+  core CPU estimate=11.7287s, cycles=161532
+confirmation native_1vc_packet512B ring1d r3 optimized: starting
+  core CPU estimate=7.7812s, cycles=161532
+  PAIR native_1vc_packet512B ring1d: 1.5073x; all comparisons passed
+confirmation native_1vc_packet512B ring2d r1 baseline: starting
+  core CPU estimate=17.1160s, cycles=160429
+confirmation native_1vc_packet512B ring2d r1 optimized: starting
+  core CPU estimate=12.4213s, cycles=160429
+  PAIR native_1vc_packet512B ring2d: 1.3780x; all comparisons passed
+confirmation native_1vc_packet512B ring2d r2 optimized: starting
+  core CPU estimate=12.4414s, cycles=160429
+confirmation native_1vc_packet512B ring2d r2 baseline: starting
+  core CPU estimate=17.1440s, cycles=160429
+  PAIR native_1vc_packet512B ring2d: 1.3780x; all comparisons passed
+confirmation native_1vc_packet512B ring2d r3 baseline: starting
+  core CPU estimate=17.0802s, cycles=160429
+confirmation native_1vc_packet512B ring2d r3 optimized: starting
+  core CPU estimate=12.3718s, cycles=160429
+  PAIR native_1vc_packet512B ring2d: 1.3806x; all comparisons passed
+Both simulator working trees and Makefiles are unchanged.
+{"stage": "screen", "hardware": "native_1vc_packet256B", "algorithm": "ring2d", "input_mib": 1, "repetitions": 1, "baseline_core_seconds_estimate_median": 18.498377025186333, "optimized_core_seconds_estimate_median": 13.520910319912051, "core_speedup_estimate": 1.3681310346348527, "speed_increase_pct_estimate": 36.81310346348528, "time_reduction_pct_estimate": 26.907585992529228, "at_least_35pct_faster": true, "at_least_35pct_less_time": false, "all_checks_passed": true, "collective_cycles": 187676, "drain_cycles": 187680, "total_runtime_speedup": 1.3641405988451532, "channel_model": "native", "flit_bytes": 16, "packet_flits": 16, "packet_bytes": 256, "num_vcs": 1, "vc_depth": 512, "link_latency_ns": 1, "bandwidth_gbps": 16, "input_speedup": 1, "hold_switch": 1, "network_topology": "mesh"}
+{"stage": "screen", "hardware": "native_1vc_packet512B", "algorithm": "ring2d", "input_mib": 1, "repetitions": 1, "baseline_core_seconds_estimate_median": 17.101340769202647, "optimized_core_seconds_estimate_median": 12.45877568166443, "core_speedup_estimate": 1.37263413405626, "speed_increase_pct_estimate": 37.263413405626, "time_reduction_pct_estimate": 27.14737487658797, "at_least_35pct_faster": true, "at_least_35pct_less_time": false, "all_checks_passed": true, "collective_cycles": 160429, "drain_cycles": 160433, "total_runtime_speedup": 1.3765891461785336, "channel_model": "native", "flit_bytes": 16, "packet_flits": 32, "packet_bytes": 512, "num_vcs": 1, "vc_depth": 512, "link_latency_ns": 1, "bandwidth_gbps": 16, "input_speedup": 1, "hold_switch": 1, "network_topology": "mesh"}
+{"stage": "screen", "hardware": "native_1vc_packet1024B", "algorithm": "ring2d", "input_mib": 1, "repetitions": 1, "baseline_core_seconds_estimate_median": 16.628411749707148, "optimized_core_seconds_estimate_median": 12.293994481051918, "core_speedup_estimate": 1.3525637883875445, "speed_increase_pct_estimate": 35.25637883875446, "time_reduction_pct_estimate": 26.06633353742618, "at_least_35pct_faster": true, "at_least_35pct_less_time": false, "all_checks_passed": true, "collective_cycles": 148416, "drain_cycles": 148420, "total_runtime_speedup": 1.348689376714549, "channel_model": "native", "flit_bytes": 16, "packet_flits": 64, "packet_bytes": 1024, "num_vcs": 1, "vc_depth": 512, "link_latency_ns": 1, "bandwidth_gbps": 16, "input_speedup": 1, "hold_switch": 1, "network_topology": "mesh"}
+{"stage": "confirmation", "hardware": "native_1vc_packet512B", "algorithm": "ring1d", "input_mib": 1, "repetitions": 3, "baseline_core_seconds_estimate_median": 11.83929994277636, "optimized_core_seconds_estimate_median": 7.715890974823227, "core_speedup_estimate": 1.5344047733965813, "speed_increase_pct_estimate": 53.44047733965813, "time_reduction_pct_estimate": 34.82814852130672, "at_least_35pct_faster": true, "at_least_35pct_less_time": false, "all_checks_passed": true, "collective_cycles": 161532, "drain_cycles": 161536, "total_runtime_speedup": 1.5302875787929127, "channel_model": "native", "flit_bytes": 16, "packet_flits": 32, "packet_bytes": 512, "num_vcs": 1, "vc_depth": 512, "link_latency_ns": 1, "bandwidth_gbps": 16, "input_speedup": 1, "hold_switch": 1, "network_topology": "mesh"}
+{"stage": "confirmation", "hardware": "native_1vc_packet512B", "algorithm": "ring2d", "input_mib": 1, "repetitions": 3, "baseline_core_seconds_estimate_median": 17.11597130360264, "optimized_core_seconds_estimate_median": 12.421316660551481, "core_speedup_estimate": 1.377951450023071, "speed_increase_pct_estimate": 37.795145002307095, "time_reduction_pct_estimate": 27.428502652741717, "at_least_35pct_faster": true, "at_least_35pct_less_time": false, "all_checks_passed": true, "collective_cycles": 160429, "drain_cycles": 160433, "total_runtime_speedup": 1.3744520566603693, "channel_model": "native", "flit_bytes": 16, "packet_flits": 32, "packet_bytes": 512, "num_vcs": 1, "vc_depth": 512, "link_latency_ns": 1, "bandwidth_gbps": 16, "input_speedup": 1, "hold_switch": 1, "network_topology": "mesh"}
+Complete: /home/hwanjin/booksim-opt/experiments/allreduce/results/ring_1MiB_mesh_refinement

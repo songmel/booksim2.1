@@ -1,0 +1,9 @@
+PASS 2x2, input=512, stripe=512 (16 messages)
+PASS 3x3, input=4608, stripe=512 (138 messages)
+PASS 4x4, input=16384, stripe=1536 (352 messages)
+PASS 5x5, input=65536, stripe=1024 (3124 messages)
+PASS 8x8, input=49152, stripe=16384 (376 messages)
+PASS 8x8, input=98304, stripe=16384 (752 messages)
+PASS 8x8, input=66560, stripe=1536 (5640 messages)
+PASS 8x8, input=1048576, stripe=16384 (8272 messages)
+All 8 cases match: 18670 message identities, sizes, dependencies and phase gates.

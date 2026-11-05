@@ -1,0 +1,114 @@
+# $Id $
+
+# Copyright (c) 2007-2015, Trustees of The Leland Stanford Junior University
+# All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+#
+# Redistributions of source code must retain the above copyright notice, this
+# list of conditions and the following disclaimer.
+# Redistributions in binary form must reproduce the above copyright notice,
+# this list of conditions and the following disclaimer in the documentation
+# and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+# POSSIBILITY OF SUCH DAMAGE.
+
+LEX = flex
+YACC   = bison -y
+DEFINE = 
+
+OPT1 ?= 1
+OPT2 ?= 0
+OPT3 ?= 0
+OPT4 ?= 0
+OPT5 ?= 0
+# OPT6: compact iSLIP storage, in-place request replacement, sparse clear.
+OPT6 ?= 1
+
+INCPATH = -I. -Iarbiters -Iallocators -Irouters -Inetworks -Ipower
+CPPFLAGS += -Wall $(INCPATH) $(DEFINE)
+CPPFLAGS += -O3
+CPPFLAGS += -g
+CPPFLAGS += -DOPT1=$(OPT1)
+CPPFLAGS += -DOPT2=$(OPT2)
+CPPFLAGS += -DOPT3=$(OPT3)
+CPPFLAGS += -DOPT4=$(OPT4)
+CPPFLAGS += -DOPT5=$(OPT5)
+CPPFLAGS += -DOPT6=$(OPT6)
+LFLAGS +=
+
+PROG := booksim
+OPT_CONFIG := .opt_config
+
+# simulator source files
+CPP_SRCS = $(wildcard *.cpp) $(wildcard */*.cpp)
+CPP_HDRS = $(wildcard *.hpp) $(wildcard */*.hpp)
+CPP_DEPS = $(CPP_SRCS:.cpp=.d)
+CPP_OBJS = $(CPP_SRCS:.cpp=.o)
+
+LEX_SRCS = lex.yy.c
+LEX_OBJS = lex.yy.o
+
+YACC_SRCS = y.tab.c
+YACC_HDRS = y.tab.h
+YACC_OBJS = y.tab.o
+
+OBJS :=  $(CPP_OBJS) $(LEX_OBJS) $(YACC_OBJS)
+
+.PHONY: all clean FORCE
+
+all: $(PROG)
+
+# Change the timestamp only when the build mode changes. All objects depend on
+# this file, so switching OPT1 through OPT6 rebuilds without requiring clean.
+$(OPT_CONFIG): FORCE
+	@printf '%s\n' 'OPT1=$(OPT1)' 'OPT2=$(OPT2)' 'OPT3=$(OPT3)' 'OPT4=$(OPT4)' 'OPT5=$(OPT5)' 'OPT6=$(OPT6)' > $@.tmp
+	@if cmp -s $@.tmp $@; then rm -f $@.tmp; else mv -f $@.tmp $@; fi
+
+FORCE:
+
+$(PROG): $(OBJS)
+	 $(CXX) $(LFLAGS) $^ -o $@
+
+$(LEX_SRCS): config.l
+	$(LEX) $<
+
+$(YACC_SRCS) $(YACC_HDRS): config.y
+	$(YACC) -d $<
+
+$(LEX_OBJS): $(LEX_SRCS) $(YACC_HDRS)
+	$(CC) $(CPPFLAGS) -c $< -o $@
+
+$(YACC_OBJS): $(YACC_SRCS)
+	$(CC) $(CPPFLAGS) -c $< -o $@
+
+%.o: %.cpp
+	$(CXX) $(CPPFLAGS) -MMD -c $< -o $@
+
+$(OBJS): $(OPT_CONFIG)
+
+clean:
+	rm -f $(YACC_SRCS) $(YACC_HDRS)
+	rm -f $(LEX_SRCS)
+	rm -f $(CPP_DEPS)
+	rm -f $(OBJS)
+	rm -f $(PROG)
+	rm -f $(OPT_CONFIG) $(OPT_CONFIG).tmp
+
+distclean: clean
+	rm -f *~ */*~
+	rm -f *.o */*.o
+	rm -f *.d */*.d
+
+-include $(CPP_DEPS)

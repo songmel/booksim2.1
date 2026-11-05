@@ -1,0 +1,43 @@
+{
+  "schema": 1,
+  "config_sha256": "3f621f53f96e658a8bf1b1b9b0958a9e9f37c943eb5d6f44a1779991e81d2b1b",
+  "records": [
+    {
+      "algorithm": "ring1d",
+      "input_bytes": 1048576,
+      "padded_bytes": 1048576,
+      "active_ranks": 64,
+      "collective_cycles": 86688,
+      "drain_cycles": 86707,
+      "packets": 258048,
+      "flits": 4128768,
+      "link_flits": 4128768,
+      "retirement_hash": "72b5caabfdb8dd43",
+      "packet_latency": 369.5,
+      "network_latency": 97.375,
+      "flit_latency": 80.455078125,
+      "average_hops": 2
+    },
+    {
+      "algorithm": "alltoall",
+      "input_bytes": 1048576,
+      "padded_bytes": 1048576,
+      "active_ranks": 64,
+      "collective_cycles": 118011,
+      "drain_cycles": 118030,
+      "packets": 129024,
+      "flits": 2064384,
+      "link_flits": 11010048,
+      "retirement_hash": "8c69e9d5c17c5ea2",
+      "packet_latency": 55010.402940538195,
+      "network_latency": 455.26956225198415,
+      "flit_latency": 433.11060103159105,
+      "average_hops": 6.333333333333333
+    }
+  ],
+  "provenance": {
+    "historical_results": "experiments/allreduce/results/table1_ring1d_alltoall_final_1MiB_3reps",
+    "historical_raw_sha256": "6d165926fc8a7bedd195dc5fa8cb88109fb471d7a4da4c08beea7107f5519b9e",
+    "note": "Timing fields intentionally excluded; preserved cycle/traffic/retirement/statistics reference"
+  }
+}

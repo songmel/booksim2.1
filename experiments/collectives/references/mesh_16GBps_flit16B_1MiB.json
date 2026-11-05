@@ -1,0 +1,43 @@
+{
+  "schema": 1,
+  "config_sha256": "e06569d18ba867e73a8b9473071eaa5cf96a9108aa2c8807f618159deb2b5c8d",
+  "records": [
+    {
+      "algorithm": "ring1d",
+      "input_bytes": 1048576,
+      "padded_bytes": 1048576,
+      "active_ranks": 64,
+      "collective_cycles": 132804,
+      "drain_cycles": 132825,
+      "packets": 258048,
+      "flits": 8257536,
+      "link_flits": 8257536,
+      "retirement_hash": "40e95abca2975603",
+      "packet_latency": 557,
+      "network_latency": 61,
+      "flit_latency": 30,
+      "average_hops": 2
+    },
+    {
+      "algorithm": "alltoall",
+      "input_bytes": 1048576,
+      "padded_bytes": 1048576,
+      "active_ranks": 64,
+      "collective_cycles": 184113,
+      "drain_cycles": 184134,
+      "packets": 129024,
+      "flits": 4128768,
+      "link_flits": 22020096,
+      "retirement_hash": "f4df95de3129374f",
+      "packet_latency": 86536.91427951389,
+      "network_latency": 653.7187887524801,
+      "flit_latency": 622.7187887524801,
+      "average_hops": 6.333333333333333
+    }
+  ],
+  "provenance": {
+    "historical_results": "experiments/allreduce/results/table1_mesh_16GBps_flit16B_ring1d_alltoall_final_1MiB_3reps",
+    "historical_raw_sha256": "f3eb566ed5a97993a3a04c8d877020102bcee012d63e1dcaf0ea115004441478",
+    "note": "Timing fields intentionally excluded; preserved cycle/traffic/retirement/statistics reference"
+  }
+}

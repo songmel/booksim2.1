@@ -1,0 +1,67 @@
+Both simulator working trees and Makefiles are unchanged.
+baseline: linked unchanged core objects into /home/hwanjin/booksim-opt/experiments/allreduce/build/phase_profile/baseline/collective
+optimized: linked unchanged core objects into /home/hwanjin/booksim-opt/experiments/allreduce/build/phase_profile/optimized/collective
+ring1d baseline r1 legacy_control: starting
+  8.436510s, 86688 cycles; reference match
+ring1d baseline r1 control: starting
+  8.512374s, 86688 cycles; reference match
+ring1d baseline r1 sampled: starting
+  8.565466s, 86688 cycles; reference match
+ring1d optimized r1 legacy_control: starting
+  7.043673s, 86688 cycles; reference match
+ring1d optimized r1 control: starting
+  7.127435s, 86688 cycles; reference match
+ring1d optimized r1 sampled: starting
+  7.028163s, 86688 cycles; reference match
+ring1d optimized r2 sampled: starting
+  7.080092s, 86688 cycles; reference match
+ring1d baseline r2 sampled: starting
+  8.496684s, 86688 cycles; reference match
+ring1d baseline r3 sampled: starting
+  8.542122s, 86688 cycles; reference match
+ring1d optimized r3 sampled: starting
+  7.086309s, 86688 cycles; reference match
+ring2d baseline r1 legacy_control: starting
+  12.952618s, 85704 cycles; reference match
+ring2d baseline r1 control: starting
+  12.893365s, 85704 cycles; reference match
+ring2d baseline r1 sampled: starting
+  12.972660s, 85704 cycles; reference match
+ring2d optimized r1 legacy_control: starting
+  10.593662s, 85704 cycles; reference match
+ring2d optimized r1 control: starting
+  10.655676s, 85704 cycles; reference match
+ring2d optimized r1 sampled: starting
+  10.641561s, 85704 cycles; reference match
+ring2d optimized r2 sampled: starting
+  10.738721s, 85704 cycles; reference match
+ring2d baseline r2 sampled: starting
+  12.947927s, 85704 cycles; reference match
+ring2d baseline r3 sampled: starting
+  12.936893s, 85704 cycles; reference match
+ring2d optimized r3 sampled: starting
+  10.683526s, 85704 cycles; reference match
+tto baseline r1 legacy_control: starting
+  12.250255s, 141524 cycles; reference match
+tto baseline r1 control: starting
+  12.367204s, 141524 cycles; reference match
+tto baseline r1 sampled: starting
+  12.314163s, 141524 cycles; reference match
+tto optimized r1 legacy_control: starting
+  9.590571s, 141524 cycles; reference match
+tto optimized r1 control: starting
+  9.641714s, 141524 cycles; reference match
+tto optimized r1 sampled: starting
+  9.605221s, 141524 cycles; reference match
+tto optimized r2 sampled: starting
+  9.666430s, 141524 cycles; reference match
+tto baseline r2 sampled: starting
+  12.730561s, 141524 cycles; reference match
+tto baseline r3 sampled: starting
+  12.364359s, 141524 cycles; reference match
+tto optimized r3 sampled: starting
+  9.668607s, 141524 cycles; reference match
+Both simulator working trees and Makefiles are unchanged.
+{"algorithm": "ring1d", "input_mib": 1, "repetitions": 3, "timing_method": "CPU sampling estimate", "collective_cycles": 86688, "drain_cycles": 86707, "all_checks_passed": true, "baseline_booksim_cpu_seconds_estimate_median": 8.119381704907946, "baseline_allreduce_cpu_seconds_estimate_median": 0.03601432864437117, "baseline_link_model_cpu_seconds_estimate_median": 0.3881616684948599, "baseline_output_cpu_seconds_estimate_median": 0, "baseline_run_seconds_median": 8.542122342, "baseline_booksim_fraction": 0.9507658643326039, "baseline_booksim_fraction_sampling_low95": 0.9451886076898647, "baseline_booksim_fraction_sampling_high95": 0.9558021520942027, "baseline_profile_samples": 6398, "baseline_observed_cpu_us_per_sample": 4001.275833698031, "baseline_booksim_mean_sampling_low95_seconds": 8.06566073948095, "baseline_booksim_mean_sampling_high95_seconds": 8.156230227636373, "baseline_control_run_seconds_median": 8.512374249, "baseline_sampler_wall_overhead_pct": 0.3494688101089327, "baseline_legacy_run_seconds": 8.436510004, "baseline_profile_vs_legacy_wall_change_pct": 1.2518486666871276, "optimized_booksim_cpu_seconds_estimate_median": 6.7019661263559325, "optimized_allreduce_cpu_seconds_estimate_median": 0.04401291187457627, "optimized_link_model_cpu_seconds_estimate_median": 0.3360985997694915, "optimized_output_cpu_seconds_estimate_median": 0, "optimized_run_seconds_median": 7.080092214, "optimized_booksim_fraction": 0.9480642115203022, "optimized_booksim_fraction_sampling_low95": 0.9417559440518611, "optimized_booksim_fraction_sampling_high95": 0.9537228199147897, "optimized_profile_samples": 5295, "optimized_observed_cpu_us_per_sample": 4000.9418192634566, "optimized_booksim_mean_sampling_low95_seconds": 6.650362456271252, "optimized_booksim_mean_sampling_high95_seconds": 6.734868492532911, "optimized_control_run_seconds_median": 7.127435264, "optimized_sampler_wall_overhead_pct": -0.6642368291876921, "optimized_legacy_run_seconds": 7.043673477, "optimized_profile_vs_legacy_wall_change_pct": 0.5170418123287668, "booksim_speedup_estimate": 1.2114925011300686, "booksim_time_reduction_pct_estimate": 17.457186151197014, "total_run_speedup_sampled": 1.2064987409498733}
+{"algorithm": "ring2d", "input_mib": 1, "repetitions": 3, "timing_method": "CPU sampling estimate", "collective_cycles": 85704, "drain_cycles": 85723, "all_checks_passed": true, "baseline_booksim_cpu_seconds_estimate_median": 12.281695463843306, "baseline_allreduce_cpu_seconds_estimate_median": 0.07599908606122449, "baseline_link_model_cpu_seconds_estimate_median": 0.6240366163238567, "baseline_output_cpu_seconds_estimate_median": 0, "baseline_run_seconds_median": 12.94792684, "baseline_booksim_fraction": 0.9487232289950577, "baseline_booksim_fraction_sampling_low95": 0.9441565347443905, "baseline_booksim_fraction_sampling_high95": 0.9529350899946103, "baseline_profile_samples": 9712, "baseline_observed_cpu_us_per_sample": 4000.246545098846, "baseline_booksim_mean_sampling_low95_seconds": 12.226951264529356, "baseline_booksim_mean_sampling_high95_seconds": 12.340634709241703, "baseline_control_run_seconds_median": 12.893364953, "baseline_sampler_wall_overhead_pct": 0.42317802372686675, "baseline_legacy_run_seconds": 12.952617513, "baseline_profile_vs_legacy_wall_change_pct": -0.036214093369879574, "optimized_booksim_cpu_seconds_estimate_median": 10.040131604206767, "optimized_allreduce_cpu_seconds_estimate_median": 0.10800887961235953, "optimized_link_model_cpu_seconds_estimate_median": 0.556045713559925, "optimized_output_cpu_seconds_estimate_median": 0, "optimized_run_seconds_median": 10.683525532, "optimized_booksim_fraction": 0.9388570002495633, "optimized_booksim_fraction_sampling_low95": 0.933398164953763, "optimized_booksim_fraction_sampling_high95": 0.9438953106189754, "optimized_profile_samples": 8014, "optimized_observed_cpu_us_per_sample": 4000.206999376091, "optimized_booksim_mean_sampling_low95_seconds": 9.974186661146625, "optimized_booksim_mean_sampling_high95_seconds": 10.086357966175129, "optimized_control_run_seconds_median": 10.655676144, "optimized_sampler_wall_overhead_pct": 0.2613573050048279, "optimized_legacy_run_seconds": 10.593661873, "optimized_profile_vs_legacy_wall_change_pct": 0.8482775840621848, "booksim_speedup_estimate": 1.2232604061382357, "booksim_time_reduction_pct_estimate": 18.251257460629844, "total_run_speedup_sampled": 1.21195262754954}
+{"algorithm": "tto", "input_mib": 1, "repetitions": 3, "timing_method": "CPU sampling estimate", "collective_cycles": 141524, "drain_cycles": 141543, "all_checks_passed": true, "baseline_booksim_cpu_seconds_estimate_median": 11.7979333920767, "baseline_allreduce_cpu_seconds_estimate_median": 0.10002503656868908, "baseline_link_model_cpu_seconds_estimate_median": 0.4481121638277271, "baseline_output_cpu_seconds_estimate_median": 0, "baseline_run_seconds_median": 12.364359193, "baseline_booksim_fraction": 0.9559264013692769, "baseline_booksim_fraction_sampling_low95": 0.9515748333649551, "baseline_booksim_fraction_sampling_high95": 0.959903407314599, "baseline_profile_samples": 9348, "baseline_observed_cpu_us_per_sample": 4000.8780025673937, "baseline_booksim_mean_sampling_low95_seconds": 11.86303209477811, "baseline_booksim_mean_sampling_high95_seconds": 11.966862226265484, "baseline_control_run_seconds_median": 12.367204195, "baseline_sampler_wall_overhead_pct": -0.02300440710074625, "baseline_legacy_run_seconds": 12.25025482, "baseline_profile_vs_legacy_wall_change_pct": 0.9314448938132269, "optimized_booksim_cpu_seconds_estimate_median": 9.0632399578125, "optimized_allreduce_cpu_seconds_estimate_median": 0.1000289804761905, "optimized_link_model_cpu_seconds_estimate_median": 0.4801716533940398, "optimized_output_cpu_seconds_estimate_median": 0, "optimized_run_seconds_median": 9.666429892, "optimized_booksim_fraction": 0.9398423454570599, "optimized_booksim_fraction_sampling_low95": 0.9341247628413708, "optimized_booksim_fraction_sampling_high95": 0.9450928449259274, "optimized_profile_samples": 7231, "optimized_observed_cpu_us_per_sample": 4001.244418476006, "optimized_booksim_mean_sampling_low95_seconds": 9.009010086449505, "optimized_booksim_mean_sampling_high95_seconds": 9.114789920214125, "optimized_control_run_seconds_median": 9.641713662, "optimized_sampler_wall_overhead_pct": 0.2563468576899375, "optimized_legacy_run_seconds": 9.590570573, "optimized_profile_vs_legacy_wall_change_pct": 0.7909781636304736, "booksim_speedup_estimate": 1.3017346387156943, "booksim_time_reduction_pct_estimate": 23.179427645360118, "total_run_speedup_sampled": 1.279102970915128}

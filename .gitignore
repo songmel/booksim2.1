@@ -1,5 +1,24 @@
+# Hidden directories at any depth
+.*/
+
+# Local measurement results
+/result/
+
+# Rebuildable binaries, source snapshots and compiler profiles
+build/
+build_products/
+dist/
+*.o
+*.d
+*.gcda
+*.gcno
+.opt_config
+.opt_config.tmp
+
+# Python caches
+__pycache__/
+*.py[cod]
+
+# Editor and OS files
 *~
-\#*#
-._*
-.Apple*
 .DS_Store

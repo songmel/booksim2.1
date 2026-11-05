@@ -1,0 +1,37 @@
+Both simulator working trees and Makefiles are unchanged.
+screen mesh_2vc_512B_1ns ring1d r1 baseline: starting
+  core CPU estimate=5.7939s, cycles=65772
+screen mesh_2vc_512B_1ns ring1d r1 optimized: starting
+  core CPU estimate=3.8694s, cycles=65772
+  PAIR mesh_2vc_512B_1ns ring1d: 1.4974x; all comparisons passed
+screen mesh_2vc_512B_1ns ring2d r1 baseline: starting
+  core CPU estimate=8.8926s, cycles=66688
+screen mesh_2vc_512B_1ns ring2d r1 optimized: starting
+  core CPU estimate=6.2409s, cycles=66688
+  PAIR mesh_2vc_512B_1ns ring2d: 1.4249x; all comparisons passed
+screen torus_2vc_512B_1ns ring1d r1 baseline: starting
+  core CPU estimate=7.1241s, cycles=97020
+screen torus_2vc_512B_1ns ring1d r1 optimized: starting
+  core CPU estimate=5.2302s, cycles=97020
+  PAIR torus_2vc_512B_1ns ring1d: 1.3621x; all comparisons passed
+screen torus_2vc_512B_1ns ring2d r1 baseline: starting
+  core CPU estimate=6.4052s, cycles=71806
+screen torus_2vc_512B_1ns ring2d r1 optimized: starting
+  core CPU estimate=4.3791s, cycles=71806
+  PAIR torus_2vc_512B_1ns ring2d: 1.4627x; all comparisons passed
+screen torus_4vc_512B_1ns ring1d r1 baseline: starting
+  core CPU estimate=6.2800s, cycles=65772
+screen torus_4vc_512B_1ns ring1d r1 optimized: starting
+  core CPU estimate=4.0949s, cycles=65772
+  PAIR torus_4vc_512B_1ns ring1d: 1.5336x; all comparisons passed
+screen torus_4vc_512B_1ns ring2d r1 baseline: starting
+  core CPU estimate=6.0914s, cycles=64522
+screen torus_4vc_512B_1ns ring2d r1 optimized: starting
+  core CPU estimate=4.1635s, cycles=64522
+  PAIR torus_4vc_512B_1ns ring2d: 1.4630x; all comparisons passed
+screen torus_2vc_128B_1ns ring1d r1 baseline: starting
+  core CPU estimate=16.0434s, cycles=258300
+screen torus_2vc_128B_1ns ring1d r1 optimized: starting
+  core CPU estimate=12.0840s, cycles=258300
+  PAIR torus_2vc_128B_1ns ring1d: 1.3277x; all comparisons passed
+screen torus_2vc_128B_1ns ring2d r1 baseline: starting

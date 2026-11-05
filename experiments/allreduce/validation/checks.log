@@ -1,0 +1,10 @@
+90 randomized numeric schedules and all 1..128 MiB schedule sizes passed
+25 GB/s serialization, 21 ns propagation, 1 GHz sampling and packet reservation passed
+25 GB/s serialization, 21 ns propagation, 1 GHz sampling and packet reservation passed
+ring1d 65536 bytes: 9198 cycles; all comparisons passed
+ring2d 65536 bytes: 6456 cycles; all comparisons passed
+tto 65536 bytes: 35695 cycles; all comparisons passed
+ring1d 1048576 bytes: 86688 cycles; all comparisons passed
+ring2d 1048576 bytes: 85704 cycles; all comparisons passed
+tto 1048576 bytes: 141524 cycles; all comparisons passed
+All experiment checks passed

@@ -1,0 +1,132 @@
+Both simulator working trees and Makefiles are unchanged.
+screen table_rate_anchor ring1d r1 baseline: starting
+  core CPU estimate=8.0548s, cycles=86688
+screen table_rate_anchor ring1d r1 optimized: starting
+  core CPU estimate=6.6084s, cycles=86688
+  PAIR table_rate_anchor ring1d: 1.2189x; all comparisons passed
+screen table_rate_anchor ring2d r1 baseline: starting
+  core CPU estimate=12.2605s, cycles=85704
+screen table_rate_anchor ring2d r1 optimized: starting
+  core CPU estimate=9.9514s, cycles=85704
+  PAIR table_rate_anchor ring2d: 1.2320x; all comparisons passed
+screen native_table ring1d r1 baseline: starting
+  core CPU estimate=6.1701s, cycles=68292
+screen native_table ring1d r1 optimized: starting
+  core CPU estimate=4.4343s, cycles=68292
+  PAIR native_table ring1d: 1.3914x; all comparisons passed
+screen native_table ring2d r1 baseline: starting
+  core CPU estimate=10.2158s, cycles=90242
+screen native_table ring2d r1 optimized: starting
+  core CPU estimate=8.6820s, cycles=90242
+  PAIR native_table ring2d: 1.1767x; all comparisons passed
+screen legacy_native ring1d r1 baseline: starting
+  core CPU estimate=17.0501s, cycles=130284
+screen legacy_native ring1d r1 optimized: starting
+  core CPU estimate=13.5765s, cycles=130284
+  PAIR legacy_native ring1d: 1.2559x; all comparisons passed
+screen legacy_native ring2d r1 baseline: starting
+  core CPU estimate=32.0869s, cycles=130311
+screen legacy_native ring2d r1 optimized: starting
+  core CPU estimate=26.2165s, cycles=130311
+  PAIR legacy_native ring2d: 1.2239x; all comparisons passed
+screen native_1vc_packet128B ring1d r1 baseline: starting
+  core CPU estimate=13.6971s, cycles=258300
+screen native_1vc_packet128B ring1d r1 optimized: starting
+  core CPU estimate=9.8045s, cycles=258300
+  PAIR native_1vc_packet128B ring1d: 1.3970x; all comparisons passed
+screen native_1vc_packet128B ring2d r1 baseline: starting
+  core CPU estimate=20.8328s, cycles=243554
+screen native_1vc_packet128B ring2d r1 optimized: starting
+  core CPU estimate=15.9408s, cycles=243554
+  PAIR native_1vc_packet128B ring2d: 1.3069x; all comparisons passed
+screen native_1vc_packet4KiB ring1d r1 baseline: starting
+  core CPU estimate=12.1478s, cycles=133308
+screen native_1vc_packet4KiB ring1d r1 optimized: starting
+  core CPU estimate=9.0404s, cycles=133308
+  PAIR native_1vc_packet4KiB ring1d: 1.3437x; all comparisons passed
+screen native_1vc_packet4KiB ring2d r1 baseline: starting
+  core CPU estimate=15.4687s, cycles=135735
+screen native_1vc_packet4KiB ring2d r1 optimized: starting
+  core CPU estimate=12.3196s, cycles=135735
+  PAIR native_1vc_packet4KiB ring2d: 1.2556x; all comparisons passed
+screen native_1vc_packet8KiB ring1d r1 baseline: starting
+  core CPU estimate=13.0161s, cycles=131292
+screen native_1vc_packet8KiB ring1d r1 optimized: starting
+  core CPU estimate=10.6573s, cycles=131292
+  PAIR native_1vc_packet8KiB ring1d: 1.2213x; all comparisons passed
+screen native_1vc_packet8KiB ring2d r1 baseline: starting
+  core CPU estimate=15.6991s, cycles=131358
+screen native_1vc_packet8KiB ring2d r1 optimized: starting
+  core CPU estimate=12.9986s, cycles=131358
+  PAIR native_1vc_packet8KiB ring2d: 1.2077x; all comparisons passed
+screen native_latency100ns ring1d r1 baseline: starting
+  core CPU estimate=11.9644s, cycles=223727
+screen native_latency100ns ring1d r1 optimized: starting
+  core CPU estimate=10.2156s, cycles=223727
+  PAIR native_latency100ns ring1d: 1.1712x; all comparisons passed
+screen native_latency100ns ring2d r1 baseline: starting
+  core CPU estimate=12.6565s, cycles=125470
+screen native_latency100ns ring2d r1 optimized: starting
+  core CPU estimate=10.8914s, cycles=125470
+  PAIR native_latency100ns ring2d: 1.1621x; all comparisons passed
+screen native_latency1000ns ring1d r1 baseline: starting
+  core CPU estimate=67.4615s, cycles=2037227
+screen native_latency1000ns ring1d r1 optimized: starting
+  core CPU estimate=59.3376s, cycles=2037227
+  PAIR native_latency1000ns ring1d: 1.1369x; all comparisons passed
+screen native_latency1000ns ring2d r1 baseline: starting
+  core CPU estimate=45.6421s, cycles=1124816
+screen native_latency1000ns ring2d r1 optimized: starting
+  core CPU estimate=43.8228s, cycles=1124816
+  PAIR native_latency1000ns ring2d: 1.0415x; all comparisons passed
+Fresh confirmation: native_1vc_packet128B
+confirmation native_1vc_packet128B ring1d r1 baseline: starting
+  core CPU estimate=13.5967s, cycles=258300
+confirmation native_1vc_packet128B ring1d r1 optimized: starting
+  core CPU estimate=9.7310s, cycles=258300
+  PAIR native_1vc_packet128B ring1d: 1.3973x; all comparisons passed
+confirmation native_1vc_packet128B ring1d r2 optimized: starting
+  core CPU estimate=9.7487s, cycles=258300
+confirmation native_1vc_packet128B ring1d r2 baseline: starting
+  core CPU estimate=13.6566s, cycles=258300
+  PAIR native_1vc_packet128B ring1d: 1.4009x; all comparisons passed
+confirmation native_1vc_packet128B ring1d r3 baseline: starting
+  core CPU estimate=13.5965s, cycles=258300
+confirmation native_1vc_packet128B ring1d r3 optimized: starting
+  core CPU estimate=9.6181s, cycles=258300
+  PAIR native_1vc_packet128B ring1d: 1.4136x; all comparisons passed
+confirmation native_1vc_packet128B ring2d r1 baseline: starting
+  core CPU estimate=20.7999s, cycles=243554
+confirmation native_1vc_packet128B ring2d r1 optimized: starting
+  core CPU estimate=15.8243s, cycles=243554
+  PAIR native_1vc_packet128B ring2d: 1.3144x; all comparisons passed
+confirmation native_1vc_packet128B ring2d r2 optimized: starting
+  core CPU estimate=15.8676s, cycles=243554
+confirmation native_1vc_packet128B ring2d r2 baseline: starting
+  core CPU estimate=20.8964s, cycles=243554
+  PAIR native_1vc_packet128B ring2d: 1.3169x; all comparisons passed
+confirmation native_1vc_packet128B ring2d r3 baseline: starting
+  core CPU estimate=20.7130s, cycles=243554
+confirmation native_1vc_packet128B ring2d r3 optimized: starting
+  core CPU estimate=15.7948s, cycles=243554
+  PAIR native_1vc_packet128B ring2d: 1.3114x; all comparisons passed
+Both simulator working trees and Makefiles are unchanged.
+{"stage": "screen", "hardware": "table_rate_anchor", "algorithm": "ring1d", "input_mib": 1, "repetitions": 1, "baseline_core_seconds_estimate_median": 8.054760783089426, "optimized_core_seconds_estimate_median": 6.608350161957399, "core_speedup_estimate": 1.2188762074774195, "speed_increase_pct_estimate": 21.887620747741956, "time_reduction_pct_estimate": 17.957213877396516, "at_least_35pct_faster": false, "at_least_35pct_less_time": false, "all_checks_passed": true, "collective_cycles": 86688, "drain_cycles": 86707, "total_runtime_speedup": 1.2037487956764297, "channel_model": "rate", "flit_bytes": 32, "packet_flits": 16, "packet_bytes": 512, "num_vcs": 4, "vc_depth": 318, "link_latency_ns": 21, "bandwidth_gbps": 25, "input_speedup": 1, "hold_switch": 1}
+{"stage": "screen", "hardware": "table_rate_anchor", "algorithm": "ring2d", "input_mib": 1, "repetitions": 1, "baseline_core_seconds_estimate_median": 12.260478404516277, "optimized_core_seconds_estimate_median": 9.95139482749103, "core_speedup_estimate": 1.2320361735267837, "speed_increase_pct_estimate": 23.203617352678375, "time_reduction_pct_estimate": 18.833552010292443, "at_least_35pct_faster": false, "at_least_35pct_less_time": false, "all_checks_passed": true, "collective_cycles": 85704, "drain_cycles": 85723, "total_runtime_speedup": 1.2164051045713495, "channel_model": "rate", "flit_bytes": 32, "packet_flits": 16, "packet_bytes": 512, "num_vcs": 4, "vc_depth": 318, "link_latency_ns": 21, "bandwidth_gbps": 25, "input_speedup": 1, "hold_switch": 1}
+{"stage": "screen", "hardware": "native_table", "algorithm": "ring1d", "input_mib": 1, "repetitions": 1, "baseline_core_seconds_estimate_median": 6.170068147102515, "optimized_core_seconds_estimate_median": 4.434333695107914, "core_speedup_estimate": 1.3914307247353788, "speed_increase_pct_estimate": 39.14307247353788, "time_reduction_pct_estimate": 28.13152805791469, "at_least_35pct_faster": true, "at_least_35pct_less_time": false, "all_checks_passed": true, "collective_cycles": 68292, "drain_cycles": 68313, "total_runtime_speedup": 1.3939059388507058, "channel_model": "native", "flit_bytes": 32, "packet_flits": 16, "packet_bytes": 512, "num_vcs": 4, "vc_depth": 318, "link_latency_ns": 21, "bandwidth_gbps": 32, "input_speedup": 1, "hold_switch": 1}
+{"stage": "screen", "hardware": "native_table", "algorithm": "ring2d", "input_mib": 1, "repetitions": 1, "baseline_core_seconds_estimate_median": 10.215841061319365, "optimized_core_seconds_estimate_median": 8.68202999485153, "core_speedup_estimate": 1.1766650273469903, "speed_increase_pct_estimate": 17.66650273469903, "time_reduction_pct_estimate": 15.014045904407848, "at_least_35pct_faster": false, "at_least_35pct_less_time": false, "all_checks_passed": true, "collective_cycles": 90242, "drain_cycles": 90263, "total_runtime_speedup": 1.1767571188512265, "channel_model": "native", "flit_bytes": 32, "packet_flits": 16, "packet_bytes": 512, "num_vcs": 4, "vc_depth": 318, "link_latency_ns": 21, "bandwidth_gbps": 32, "input_speedup": 1, "hold_switch": 1}
+{"stage": "screen", "hardware": "legacy_native", "algorithm": "ring1d", "input_mib": 1, "repetitions": 1, "baseline_core_seconds_estimate_median": 17.05007662001864, "optimized_core_seconds_estimate_median": 13.57651909913148, "core_speedup_estimate": 1.2558503763390552, "speed_increase_pct_estimate": 25.585037633905515, "time_reduction_pct_estimate": 20.372679831883143, "at_least_35pct_faster": false, "at_least_35pct_less_time": false, "all_checks_passed": true, "collective_cycles": 130284, "drain_cycles": 130288, "total_runtime_speedup": 1.2565815015555744, "channel_model": "native", "flit_bytes": 16, "packet_flits": 8, "packet_bytes": 128, "num_vcs": 8, "vc_depth": 8, "link_latency_ns": 1, "bandwidth_gbps": 16, "input_speedup": 2, "hold_switch": 0}
+{"stage": "screen", "hardware": "legacy_native", "algorithm": "ring2d", "input_mib": 1, "repetitions": 1, "baseline_core_seconds_estimate_median": 32.086890751342835, "optimized_core_seconds_estimate_median": 26.216465420432925, "core_speedup_estimate": 1.2239213119223364, "speed_increase_pct_estimate": 22.392131192233645, "time_reduction_pct_estimate": 18.29540099850352, "at_least_35pct_faster": false, "at_least_35pct_less_time": false, "all_checks_passed": true, "collective_cycles": 130311, "drain_cycles": 130315, "total_runtime_speedup": 1.223799459600698, "channel_model": "native", "flit_bytes": 16, "packet_flits": 8, "packet_bytes": 128, "num_vcs": 8, "vc_depth": 8, "link_latency_ns": 1, "bandwidth_gbps": 16, "input_speedup": 2, "hold_switch": 0}
+{"stage": "screen", "hardware": "native_1vc_packet128B", "algorithm": "ring1d", "input_mib": 1, "repetitions": 1, "baseline_core_seconds_estimate_median": 13.697054656547564, "optimized_core_seconds_estimate_median": 9.804482386755563, "core_speedup_estimate": 1.3970196606248488, "speed_increase_pct_estimate": 39.701966062484885, "time_reduction_pct_estimate": 28.41904604601433, "at_least_35pct_faster": true, "at_least_35pct_less_time": false, "all_checks_passed": true, "collective_cycles": 258300, "drain_cycles": 258304, "total_runtime_speedup": 1.3952218199048776, "channel_model": "native", "flit_bytes": 16, "packet_flits": 8, "packet_bytes": 128, "num_vcs": 1, "vc_depth": 512, "link_latency_ns": 1, "bandwidth_gbps": 16, "input_speedup": 1, "hold_switch": 1}
+{"stage": "screen", "hardware": "native_1vc_packet128B", "algorithm": "ring2d", "input_mib": 1, "repetitions": 1, "baseline_core_seconds_estimate_median": 20.832798267144923, "optimized_core_seconds_estimate_median": 15.940758186239092, "core_speedup_estimate": 1.3068887956112964, "speed_increase_pct_estimate": 30.688879561129646, "time_reduction_pct_estimate": 23.48239549086879, "at_least_35pct_faster": false, "at_least_35pct_less_time": false, "all_checks_passed": true, "collective_cycles": 243554, "drain_cycles": 243558, "total_runtime_speedup": 1.3108625438429617, "channel_model": "native", "flit_bytes": 16, "packet_flits": 8, "packet_bytes": 128, "num_vcs": 1, "vc_depth": 512, "link_latency_ns": 1, "bandwidth_gbps": 16, "input_speedup": 1, "hold_switch": 1}
+{"stage": "screen", "hardware": "native_1vc_packet4KiB", "algorithm": "ring1d", "input_mib": 1, "repetitions": 1, "baseline_core_seconds_estimate_median": 12.147763764572552, "optimized_core_seconds_estimate_median": 9.040358698970977, "core_speedup_estimate": 1.3437258596780322, "speed_increase_pct_estimate": 34.37258596780322, "time_reduction_pct_estimate": 25.580058402715544, "at_least_35pct_faster": false, "at_least_35pct_less_time": false, "all_checks_passed": true, "collective_cycles": 133308, "drain_cycles": 133312, "total_runtime_speedup": 1.3424276733413567, "channel_model": "native", "flit_bytes": 16, "packet_flits": 256, "packet_bytes": 4096, "num_vcs": 1, "vc_depth": 512, "link_latency_ns": 1, "bandwidth_gbps": 16, "input_speedup": 1, "hold_switch": 1}
+{"stage": "screen", "hardware": "native_1vc_packet4KiB", "algorithm": "ring2d", "input_mib": 1, "repetitions": 1, "baseline_core_seconds_estimate_median": 15.46865217825946, "optimized_core_seconds_estimate_median": 12.319593117539181, "core_speedup_estimate": 1.255613885188872, "speed_increase_pct_estimate": 25.561388518887206, "time_reduction_pct_estimate": 20.35768226236381, "at_least_35pct_faster": false, "at_least_35pct_less_time": false, "all_checks_passed": true, "collective_cycles": 135735, "drain_cycles": 135739, "total_runtime_speedup": 1.2524345043634988, "channel_model": "native", "flit_bytes": 16, "packet_flits": 256, "packet_bytes": 4096, "num_vcs": 1, "vc_depth": 512, "link_latency_ns": 1, "bandwidth_gbps": 16, "input_speedup": 1, "hold_switch": 1}
+{"stage": "screen", "hardware": "native_1vc_packet8KiB", "algorithm": "ring1d", "input_mib": 1, "repetitions": 1, "baseline_core_seconds_estimate_median": 13.016068363853211, "optimized_core_seconds_estimate_median": 10.657269480215488, "core_speedup_estimate": 1.2213323861254213, "speed_increase_pct_estimate": 22.13323861254213, "time_reduction_pct_estimate": 18.122207241845157, "at_least_35pct_faster": false, "at_least_35pct_less_time": false, "all_checks_passed": true, "collective_cycles": 131292, "drain_cycles": 131296, "total_runtime_speedup": 1.22320134050983, "channel_model": "native", "flit_bytes": 16, "packet_flits": 512, "packet_bytes": 8192, "num_vcs": 1, "vc_depth": 512, "link_latency_ns": 1, "bandwidth_gbps": 16, "input_speedup": 1, "hold_switch": 1}
+{"stage": "screen", "hardware": "native_1vc_packet8KiB", "algorithm": "ring2d", "input_mib": 1, "repetitions": 1, "baseline_core_seconds_estimate_median": 15.699056517772602, "optimized_core_seconds_estimate_median": 12.998603095611776, "core_speedup_estimate": 1.2077495098740632, "speed_increase_pct_estimate": 20.774950987406314, "time_reduction_pct_estimate": 17.201373974949995, "at_least_35pct_faster": false, "at_least_35pct_less_time": false, "all_checks_passed": true, "collective_cycles": 131358, "drain_cycles": 131362, "total_runtime_speedup": 1.211196579343535, "channel_model": "native", "flit_bytes": 16, "packet_flits": 512, "packet_bytes": 8192, "num_vcs": 1, "vc_depth": 512, "link_latency_ns": 1, "bandwidth_gbps": 16, "input_speedup": 1, "hold_switch": 1}
+{"stage": "screen", "hardware": "native_latency100ns", "algorithm": "ring1d", "input_mib": 1, "repetitions": 1, "baseline_core_seconds_estimate_median": 11.96436554789701, "optimized_core_seconds_estimate_median": 10.215635818236946, "core_speedup_estimate": 1.1711816827434505, "speed_increase_pct_estimate": 17.118168274345045, "time_reduction_pct_estimate": 14.616150958104424, "at_least_35pct_faster": false, "at_least_35pct_less_time": false, "all_checks_passed": true, "collective_cycles": 223727, "drain_cycles": 223827, "total_runtime_speedup": 1.1725157904225625, "channel_model": "native", "flit_bytes": 32, "packet_flits": 16, "packet_bytes": 512, "num_vcs": 4, "vc_depth": 318, "link_latency_ns": 100, "bandwidth_gbps": 32, "input_speedup": 1, "hold_switch": 1}
+{"stage": "screen", "hardware": "native_latency100ns", "algorithm": "ring2d", "input_mib": 1, "repetitions": 1, "baseline_core_seconds_estimate_median": 12.656529903813778, "optimized_core_seconds_estimate_median": 10.891364683324353, "core_speedup_estimate": 1.162070160334641, "speed_increase_pct_estimate": 16.207016033464107, "time_reduction_pct_estimate": 13.946676015497184, "at_least_35pct_faster": false, "at_least_35pct_less_time": false, "all_checks_passed": true, "collective_cycles": 125470, "drain_cycles": 125570, "total_runtime_speedup": 1.1568858567654252, "channel_model": "native", "flit_bytes": 32, "packet_flits": 16, "packet_bytes": 512, "num_vcs": 4, "vc_depth": 318, "link_latency_ns": 100, "bandwidth_gbps": 32, "input_speedup": 1, "hold_switch": 1}
+{"stage": "screen", "hardware": "native_latency1000ns", "algorithm": "ring1d", "input_mib": 1, "repetitions": 1, "baseline_core_seconds_estimate_median": 67.46147765596531, "optimized_core_seconds_estimate_median": 59.33764856623953, "core_speedup_estimate": 1.13690851063397, "speed_increase_pct_estimate": 13.690851063397002, "time_reduction_pct_estimate": 12.042174841107157, "at_least_35pct_faster": false, "at_least_35pct_less_time": false, "all_checks_passed": true, "collective_cycles": 2037227, "drain_cycles": 2038227, "total_runtime_speedup": 1.1364956917241424, "channel_model": "native", "flit_bytes": 32, "packet_flits": 16, "packet_bytes": 512, "num_vcs": 4, "vc_depth": 318, "link_latency_ns": 1000, "bandwidth_gbps": 32, "input_speedup": 1, "hold_switch": 1}
+{"stage": "screen", "hardware": "native_latency1000ns", "algorithm": "ring2d", "input_mib": 1, "repetitions": 1, "baseline_core_seconds_estimate_median": 45.64212525764382, "optimized_core_seconds_estimate_median": 43.82275753372241, "core_speedup_estimate": 1.0415165048096613, "speed_increase_pct_estimate": 4.151650480966129, "time_reduction_pct_estimate": 3.9861590880164277, "at_least_35pct_faster": false, "at_least_35pct_less_time": false, "all_checks_passed": true, "collective_cycles": 1124816, "drain_cycles": 1125816, "total_runtime_speedup": 1.0418261744067563, "channel_model": "native", "flit_bytes": 32, "packet_flits": 16, "packet_bytes": 512, "num_vcs": 4, "vc_depth": 318, "link_latency_ns": 1000, "bandwidth_gbps": 32, "input_speedup": 1, "hold_switch": 1}
+{"stage": "confirmation", "hardware": "native_1vc_packet128B", "algorithm": "ring1d", "input_mib": 1, "repetitions": 3, "baseline_core_seconds_estimate_median": 13.596722289989744, "optimized_core_seconds_estimate_median": 9.730968570414353, "core_speedup_estimate": 1.3972629951070517, "speed_increase_pct_estimate": 39.72629951070517, "time_reduction_pct_estimate": 28.43151192711686, "at_least_35pct_faster": true, "at_least_35pct_less_time": false, "all_checks_passed": true, "collective_cycles": 258300, "drain_cycles": 258304, "total_runtime_speedup": 1.3928517574487875, "channel_model": "native", "flit_bytes": 16, "packet_flits": 8, "packet_bytes": 128, "num_vcs": 1, "vc_depth": 512, "link_latency_ns": 1, "bandwidth_gbps": 16, "input_speedup": 1, "hold_switch": 1}
+{"stage": "confirmation", "hardware": "native_1vc_packet128B", "algorithm": "ring2d", "input_mib": 1, "repetitions": 3, "baseline_core_seconds_estimate_median": 20.799857374832918, "optimized_core_seconds_estimate_median": 15.824334960171429, "core_speedup_estimate": 1.314422212825024, "speed_increase_pct_estimate": 31.442221282502402, "time_reduction_pct_estimate": 23.92094486513976, "at_least_35pct_faster": false, "at_least_35pct_less_time": false, "all_checks_passed": true, "collective_cycles": 243554, "drain_cycles": 243558, "total_runtime_speedup": 1.3123057458363694, "channel_model": "native", "flit_bytes": 16, "packet_flits": 8, "packet_bytes": 128, "num_vcs": 1, "vc_depth": 512, "link_latency_ns": 1, "bandwidth_gbps": 16, "input_speedup": 1, "hold_switch": 1}
+Complete: /home/hwanjin/booksim-opt/experiments/allreduce/results/ring_1MiB_hardware_search

@@ -1,0 +1,41 @@
+// One finite dependency-driven ring2d AllReduce.
+topology = mesh;
+k = 8;
+n = 2;
+c = 1;
+subnets = 1;
+classes = 1;
+routing_function = dor;
+router = iq;
+num_vcs = 8;
+vc_buf_size = 8;
+buffer_policy = private;
+wait_for_tail_credit = 1;
+vc_allocator = islip;
+sw_allocator = islip;
+alloc_iters = 1;
+credit_delay = 2;
+routing_delay = 0;
+vc_alloc_delay = 1;
+sw_alloc_delay = 1;
+st_prepare_delay = 0;
+st_final_delay = 1;
+input_speedup = 2;
+output_speedup = 1;
+internal_speedup = 1.0;
+use_noc_latency = 1;
+use_read_write = 0;
+priority = none;
+// Base-class placeholders; AllReduce supplies destinations and packet lengths.
+traffic = uniform;
+packet_size = 8;
+injection_rate = 1.0;
+sim_type = allreduce;
+allreduce_algorithm = ring2d;
+sim_count = 1;
+seed = 0;
+// Input size per contributing rank; 128-byte packets with no padding.
+allreduce_bytes = 1048576;
+flit_bytes = 16;
+max_packet_flits = 8;
+allreduce_max_cycles = 10000000;

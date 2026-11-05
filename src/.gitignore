@@ -1,8 +1,0 @@
-booksim
-lex.yy.c
-y.tab.c
-y.tab.h
-*.o
-*.d
-.opt_config
-.opt_config.tmp

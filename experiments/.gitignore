@@ -1,0 +1,5 @@
+build/
+results/
+dist/
+__pycache__/
+*.pyc
