@@ -4,6 +4,7 @@ import hashlib
 import json
 import os
 import resource
+import statistics
 from pathlib import Path
 import subprocess
 import time
@@ -11,6 +12,8 @@ import time
 ROOT = Path(__file__).resolve().parent
 WORKSPACE = ROOT.parent
 COLLECTIVES = ROOT / "collectives"
+VARIANTS = ("baseline_o3", "opt1to6_final")
+ALGORITHMS = ("alltoall", "ring1d")
 RESULT_FIELDS = ("algorithm", "input_bytes", "padded_bytes", "active_ranks",
                  "collective_cycles", "drain_cycles", "packets", "flits", "link_flits",
                  "retirement_hash", "packet_latency", "network_latency", "flit_latency", "average_hops")
@@ -56,6 +59,39 @@ def check_equal(reference, actual):
     changed = [field for field in RESULT_FIELDS if reference[field] != actual[field]]
     if changed:
         raise RuntimeError("Collective result mismatch: " + ", ".join(changed))
+
+
+def summarize(rows):
+    """Compare original BookSim O3 with all optimizations enabled."""
+    pairs, summaries = [], []
+    base, optimized = VARIANTS
+    workloads = sorted({(r["algorithm"], r["input_mib"]) for r in rows})
+    for algorithm, mib in workloads:
+        selected = [r for r in rows if (r["algorithm"], r["input_mib"]) == (algorithm, mib)]
+        b = [r for r in selected if r["variant"] == base]
+        o = [r for r in selected if r["variant"] == optimized]
+        if not b or not o or {r["repetition"] for r in b} != {r["repetition"] for r in o}:
+            continue
+        for left, right in zip(sorted(b, key=lambda r: r["repetition"]),
+                               sorted(o, key=lambda r: r["repetition"])):
+            check_equal(left, right)
+            pairs.append(dict(algorithm=algorithm, input_mib=mib, repetition=left["repetition"],
+                              baseline=base, optimized=optimized, all_checks_passed=True,
+                              baseline_seconds=left["run_seconds"], optimized_seconds=right["run_seconds"],
+                              speedup=left["run_seconds"] / right["run_seconds"]))
+        previous = statistics.median(r["run_seconds"] for r in b)
+        current = statistics.median(r["run_seconds"] for r in o)
+        summaries.append(dict(algorithm=algorithm, input_mib=mib, baseline=base, optimized=optimized,
+                              repetitions=len(b), baseline_median_seconds=previous,
+                              optimized_median_seconds=current, speedup=previous / current,
+                              time_reduction_pct=100 * (1 - current / previous),
+                              baseline_min_seconds=min(r["run_seconds"] for r in b),
+                              baseline_max_seconds=max(r["run_seconds"] for r in b),
+                              optimized_min_seconds=min(r["run_seconds"] for r in o),
+                              optimized_max_seconds=max(r["run_seconds"] for r in o),
+                              collective_cycles=b[0]["collective_cycles"], drain_cycles=b[0]["drain_cycles"],
+                              all_checks_passed=True))
+    return pairs, summaries
 
 
 def check_reference(row, configuration):

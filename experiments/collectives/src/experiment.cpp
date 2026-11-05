@@ -348,11 +348,9 @@ static int RunExperiment(int argc, char **argv) {
     experiment::ExperimentConfig config;
     config.ParseFile(argv[1]);
     experiment::HardwareSpec hardware(config);
-    if(algorithm != "ring1d" && algorithm != "ring2d" && algorithm != "tto" && algorithm != "alltoall")
-      experiment::Fail<std::invalid_argument>("Unknown algorithm");
+    if(algorithm != "ring1d" && algorithm != "alltoall")
+      experiment::Fail<std::invalid_argument>("Only Ring1D AllReduce and AllToAll are supported");
     experiment::Schedule plan = algorithm == "ring1d" ? experiment::Ring1D(8, bytes, hardware.PacketBytes()) :
-      algorithm == "ring2d" ? experiment::Ring2D(8, bytes, hardware.PacketBytes()) :
-      algorithm == "tto" ? experiment::TTO(8, bytes, stripe, hardware.PacketBytes()) :
       experiment::AllToAll(8, bytes, hardware.PacketBytes());
     int profile_us = 0;
     if(argc == 7 && std::string(argv[6]) == "--schedule-only") {

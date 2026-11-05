@@ -7,17 +7,8 @@ from pathlib import Path
 import shutil
 import subprocess
 
-from repro_common import COLLECTIVES, ROOT, WORKSPACE, core_hashes, execute, sha, write_json
-
-VARIANTS = {
-    "baseline_o3": ("booksim2", 0, 0, False),
-    "optimized_o3": ("booksim-opt", 1, 1, False),
-    # Match the optimized Makefile's default compiler optimizations, without PGO.
-    "optimized_native": ("booksim-opt", 1, 1, True),
-    "baseline_final": ("booksim2", 0, 0, True),
-    "opt1to5_final": ("booksim-opt", 1, 0, True),
-    "opt1to6_final": ("booksim-opt", 1, 1, True),
-}
+from repro_common import (ALGORITHMS, COLLECTIVES, ROOT, VARIANTS, WORKSPACE,
+                          core_hashes, execute, sha, write_json)
 
 
 def command(argv, cwd, log):
@@ -37,14 +28,20 @@ def target_cpu():
 
 
 def build(variant, configuration, algorithms, jobs=4, cpu=0, build_root=None):
-    repository_name, old_opts, opt6, full = VARIANTS[variant]
-    pgo = full and variant != "optimized_native"
+    if variant not in VARIANTS:
+        raise ValueError("Only baseline_o3 and opt1to6_final are supported")
+    if not algorithms or len(set(algorithms)) != len(algorithms) or any(a not in ALGORITHMS for a in algorithms):
+        raise ValueError("Only Ring1D AllReduce and AllToAll are supported")
+    full = pgo = variant == "opt1to6_final"
+    if pgo and len(algorithms) != 1:
+        raise ValueError("Build a separate optimized PGO executable for each algorithm")
+    repository_name = "booksim-opt" if full else "booksim2"
     repository = WORKSPACE / repository_name
     cxx, cc = os.environ.get("CXX", "g++"), os.environ.get("CC", "gcc")
     compiler = subprocess.check_output([cxx, "--version"], text=True).splitlines()[0]
     c_compiler = subprocess.check_output([cc, "--version"], text=True).splitlines()[0]
     native = ["-O3", "-g", "-Wall"] + (["-march=native", "-flto=auto"] if full else [])
-    opts = [f"-DOPT{i}={old_opts}" for i in range(1, 6)] + [f"-DOPT6={opt6}"]
+    opts = [f"-DOPT{i}={int(full)}" for i in range(1, 7)]
     cpp_flags = [*native, "-std=c++11", *(["-fno-exceptions"] if full else []), *opts]
     common_hashes = {p.name:sha(p) for p in sorted((COLLECTIVES / "src").iterdir()) if p.is_file()}
     inputs = dict(schema=1, variant=variant, compiler=compiler, c_compiler=c_compiler,
@@ -148,7 +145,7 @@ def build(variant, configuration, algorithms, jobs=4, cpu=0, build_root=None):
             if any(sha(profiles / name) != digest for name, digest in record["profiles_sha256"].items()):
                 raise RuntimeError("PGO feedback changed during use compilation")
         else:
-            compile_stage("native" if full else "o3")
+            compile_stage("o3")
         if core_hashes(directory / "source") != inputs["source_sha256"]:
             raise RuntimeError("Core snapshot was modified during build")
         record.update(status="complete", binary_sha256=sha(binary))

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Checkpointed BookSim2/BookSim-Opt size sweep with incremental CSV reports."""
+"""Compare BookSim 2.0 and fully optimized BookSim Opt on AllReduce and AllToAll."""
 import argparse
 import csv
 import datetime
@@ -12,13 +12,10 @@ import shutil
 import statistics
 
 from repro_build import build
-from repro_common import (COLLECTIVES, ROOT, check_equal, core_hashes, execute,
-                          sha, write_json)
-from reproduce import summarize
+from repro_common import (ALGORITHMS, COLLECTIVES, ROOT, VARIANTS, check_equal,
+                          core_hashes, execute, sha, summarize, write_json)
 from verify_layout import verify
 
-VARIANTS = ("baseline_o3", "opt1to6_final")
-ALGORITHMS = ("alltoall", "ring1d")
 SOFTWARE = dict(baseline_o3="BookSim2", opt1to6_final="BookSim-Opt")
 COLLECTIVE = dict(alltoall="AllToAll", ring1d="AllReduce")
 
@@ -92,8 +89,10 @@ def write_csv(path, rows, fields=None):
 
 def export_results(directory, rows, repetitions):
     """Write partial results honestly: complete means all requested repeats exist."""
-    if any(row["variant"] == "opt1to6_final" and row.get("pgo_enabled") is not True for row in rows):
-        raise RuntimeError("Cannot report an optimized measurement without PGO")
+    if any(row["variant"] not in VARIANTS or row["algorithm"] not in ALGORITHMS for row in rows):
+        raise RuntimeError("Only BookSim 2.0 and BookSim Opt AllReduce/AllToAll measurements are supported")
+    if any(row.get("pgo_enabled") != (row["variant"] == "opt1to6_final") for row in rows):
+        raise RuntimeError("Measurements require original BookSim O3 or fully optimized BookSim Opt with PGO")
     if rows:
         write_csv(directory / "raw.csv", rows)
     # Keep completed pairs visible while the next repetition is still running.

@@ -1,167 +1,168 @@
-# Collective experiments
+# BookSim Opt experiments
 
-The size-sweep entry point is `run_sweep.py`; `reproduce.py` supports additional
-PGO comparisons. AllReduce and AllToAll use one external
-executor and the same native BookSim interfaces. Neither core contains collective
-algorithms, added collective configuration fields or injection/generation APIs.
+These experiments compare exactly two versions on AllReduce and AllToAll:
+
+| Version | Build ID | Core | Implementation optimizations | Compiler setup |
+|---|---|---|---|---|
+| BookSim 2.0 | `baseline_o3` | `booksim2/` | Original upstream implementation | `-O3` |
+| BookSim Opt | `opt1to6_final` | `booksim-opt/` | OPT1–OPT6 enabled | `-O3 -march=native -flto=auto -fno-exceptions` and PGO |
+
+Both versions use the same external collective executor and hardware model.
+AllReduce uses Ring1D ReduceScatter + AllGather; AllToAll uses direct exchange.
+The runner always measures both workloads and both versions.
+
+## Requirements
+
+Run all commands from the repository root. Requires Linux, Python 3.10+, GCC/G++,
+flex, bison, and `taskset` (util-linux). Python dependencies are limited to the
+standard library. The runner builds both cores directly; a separate `make` step
+is unnecessary. Experiment compiler settings are independent of each core's
+standalone Makefile.
+
+## Reproduce the CSV results
+
+```sh
+python3 experiments/run_sweep.py \
+  --sizes-mib 1 2 4 8 16 32 64 \
+  --repetitions 3 \
+  --output result/reproduced
+```
+
+This performs **84 measured runs**: seven sizes × two workloads × two versions ×
+three repetitions. Measurements run serially on one pinned CPU, alternating the
+version order across repetitions. The first run requires a new or empty output
+directory. Execution times and speedups are measured again and may differ across
+machines and runs. `result/` is ignored by Git.
+
+A small check uses the same experiment settings and CSV format, with four
+measured runs at 1 MiB/rank:
+
+```sh
+python3 experiments/run_sweep.py \
+  --sizes-mib 1 --repetitions 1 --output result/quick_check
+```
+
+To resume after an interruption, repeat the original command with `--resume`:
+
+```sh
+python3 experiments/run_sweep.py \
+  --sizes-mib 1 2 4 8 16 32 64 \
+  --repetitions 3 \
+  --output result/reproduced --resume
+```
+
+Resume requires the same sizes, repetition count, and CPU. Only validated
+checkpoints are skipped; changed core sources, binaries, configuration, or PGO
+feedback are rejected. Each completed measurement is saved under `records/`.
+A lock prevents concurrent sweeps from using the same output directory.
+
+`--cpu` selects an allowed logical CPU; the default is the lowest ID allowed by
+the process affinity. `--jobs` controls build parallelism and defaults to 4.
+Each simulation process has a timeout of `max(900, 90 * input_mib)` seconds.
+Avoid other CPU-intensive work during timing measurements.
+
+`reproduce.py` is an alias for the same runner and accepts the same options.
+
+## Build and PGO policy
+
+Each new output directory gets fresh source builds and profiles under `build/`.
+BookSim 2.0 uses O3 without PGO. BookSim Opt enables all six implementation
+switches and all compiler optimizations listed above. Both builds use C++11,
+retain debug symbols with `-g`, and enable `-Wall`.
+
+AllReduce and AllToAll each get a separate optimized executable, trained once
+on that algorithm at 1 MiB/rank with the same hardware. The trained executable
+is fixed across all measured sizes. Training runs are excluded from the measured
+run count and timing statistics. This trains on the evaluation workloads and
+sizes are swept using those profiles.
+
+Generation and feedback-use builds keep the same object paths. Missing or
+incompatible profiles are treated as build errors. Source, compiler, command,
+object, executable, and PGO provenance are recorded in build manifests. Resume
+reuses the saved builds after validating their sources, binaries, and profiles.
+
+## Generated files
+
+The completed default sweep produces eight CSV files:
+
+| File | Contents | Rows |
+|---|---|---:|
+| `allreduce_runtime.csv`, `alltoall_runtime.csv` | Host execution time: median/min/max, speedup, and time reduction | 7 each |
+| `allreduce_cycles.csv`, `alltoall_cycles.csv` | Simulated collective completion and credit-drain cycles for both versions | 7 each |
+| `raw.csv` | Individual measured runs | 84 |
+| `metrics.csv` | Timing, traffic, latency, CPU time, and throughput per workload/size/version | 28 |
+| `summary.csv` | Median comparisons per workload/size | 14 |
+| `pairs.csv` | Comparisons per workload/size/repetition | 42 |
+
+CSV files update after each completed run. `measurement_complete=False` marks
+rows with fewer than the requested repetitions. `booksim_opt_pgo_enabled` in the
+four runtime/cycle CSVs and `pgo_enabled` in raw/metric rows record PGO use.
+
+`manifest.json` records the settings, builds, and completion status. A completed
+default sweep has `status="complete"`, `measured_runs=84`, and
+`all_checks_passed=true`. `progress.json` records completed counts and the current
+condition. Its ETA uses measured process seconds/MiB, with historical estimates
+for groups that have no measurements yet. Estimates never supply CSV values.
+`runner.log` records progress; `logs/` stores simulation output.
+
+## Hardware and workload semantics
+
+The default model is a 64-rank, 8×8 mesh at 1 GHz (1 ns/cycle), with 16 GB/s
+links, 16-byte flits, 512-byte packets, 21 ns inter-router propagation, 1 ns
+endpoint propagation, and four private VCs of 318 flits each. Admission requires
+an empty VC; switch connections are held for each packet. These settings come
+from `collectives/configs/mesh_16GBps_flit16B.cfg`.
+
+Input sizes are MiB per rank. AllToAll includes the local self block in the send
+buffer: at 1 MiB/rank, 1008 KiB crosses the network and 16 KiB stays local.
+Direct exchange interleaves eligible peer messages at packet boundaries.
+Ring1D uses 63 ReduceScatter and 63 AllGather rounds with completion dependencies.
+
+The common executor uses native BookSim routing, arbitration, pipeline, and credit
+logic, with external link adapters. It tracks packet/block provenance, contributor
+identities, traffic, and credit restoration. Payload tensors are not transported
+or reduced numerically in the timed model.
+
+## Timing and validation
+
+Primary timing is `TrafficManager::Run()` wall time, including the native
+simulation, common controller, link adapters, online checks, credit drain, and
+statistics output. Setup and final validation are excluded. Separate fields
+record whole-process wall and CPU time.
+
+Runs must pass native online/final checks and match simulated cycles, traffic,
+retirement hashes, and latency/hop statistics across versions and repetitions.
+Known 1 MiB configurations are also compared with preserved historical references.
+Speedup is original time / optimized time; time reduction is
+`100 * (1 - optimized time / original time)`.
+
+## Source layout and records
 
 ```text
 experiments/
-  reproduce.py         build, validate and measure current sources
-  run_sweep.py         checkpointed size sweep; mandatory optimized PGO
-  repro_build.py       isolated builds and fresh PGO
-  repro_common.py      result/reference checks and CSV helpers
-  verify_layout.py     recorded core inventory validation
-  core_manifest.json   source SHA and upstream provenance
+  run_sweep.py         measurement entry point and CSV export
+  reproduce.py         alias for run_sweep.py
+  repro_build.py       original O3 and fully optimized PGO builds
+  repro_common.py      fixed experiment definitions, comparisons, and helpers
+  verify_layout.py     internal source inventory validation
+  core_manifest.json   source hashes and upstream provenance
   collectives/
-    src/               executor, schedules, hardware adapters, CPU sampler
-    configs/           explicit 16GB/s and 25GB/s hardware profiles
-    references/        timing-free historical 1MiB results
-  build/               generated snapshots, objects, PGO, binaries (ignored)
-  results/             fresh measurements (ignored)
-  allreduce/           preserved historical experiments/results
-  legacy/              removed standalone integrations and build products
+    src/               common executor, schedules, and hardware adapters
+    configs/           hardware profiles
+    references/        historical 1 MiB validation references
+  build/               local build caches (ignored)
+  results/             local measurements (ignored)
+  allreduce/           historical experiment records and drivers
+  legacy/              preserved earlier integrations
 ```
 
-## Build variants
+The cores contain no collective-specific algorithms or configuration extensions.
+The runner automatically checks the core source inventory against
+`core_manifest.json`. Intentional core changes require updating that inventory.
 
-| Name | Core | OPT1..5 | OPT6 | Compiler setup |
-|---|---|---:|---:|---|
-| `baseline_o3` | booksim2 | 0 | 0 | O3 |
-| `optimized_o3` | booksim-opt | 1 | 1 | O3 |
-| `optimized_native` | booksim-opt | 1 | 1 | O3/native/LTO-auto/no-exceptions; no PGO |
-| `baseline_final` | booksim2 | 0 | 0 | O3/native/LTO-auto/no-exceptions/PGO |
-| `opt1to5_final` | booksim-opt | 1 | 0 | same full compiler setup |
-| `opt1to6_final` | booksim-opt | 1 | 1 | same full compiler setup |
+`allreduce/` and `legacy/` preserve earlier experiments and their recorded source
+provenance. The current runner builds from the present core/common sources and
+uses its own output directory.
 
-Every C++ unit receives all six switches explicitly. Full variants train once
-per requested algorithm at 1MiB using the selected hardware. Training is excluded
-from timing; generation and feedback-use builds keep the same object paths, with
-missing-profile and coverage-mismatch diagnostics treated as errors. This is
-training on the evaluation workload, not a held-out generalization experiment.
-
-All active optimized measurements require PGO. The O3-only and native-only
-optimized variants are retained in the low-level builder for historical and
-diagnostic uses; the experiment entry points reject them as comparison targets.
-
-These variants set compiler flags independently of the native core Makefiles.
-The optimized core's own `make` now defaults to all six OPT switches and
-O3/native/LTO-auto/no-exceptions, with explicit PGO generation/use modes; see
-its [build instructions](../booksim-opt/README.md).
-
-The build key hashes current core/common sources, compiler flags/version, native
-CPU target and PGO input. Reusing a valid matching cache is optional; builds work
-with no cache, Git installation or repository metadata. Failed builds retain logs
-and a rerun uses a fresh retry directory. Relative checkout/build paths are supported.
-
-## Run
-
-For the 1..64 MiB sweep at powers of two, three repeats per condition, use:
-
-```sh
-python3 experiments/run_sweep.py --output /home/hwanjin/booksim-opt/result
-# Continue completed checkpoints after an interruption, with identical settings:
-python3 experiments/run_sweep.py --output /home/hwanjin/booksim-opt/result --resume
-```
-
-This makes 84 serial runs on one pinned CPU: BookSim2 with O3 versus BookSim-Opt
-with OPT1..6 and O3/native/LTO-auto/no-exceptions/**PGO**. AllToAll and AllReduce
-each use a separate optimized executable trained once on that algorithm at
-1 MiB, on the same hardware. The trained executable remains fixed across all
-sizes; training is excluded from the three timing repetitions. A new output
-directory gets fresh source builds and profiles under its `build/` subdirectory.
-The external executor uses C++11 for both variants. AllReduce uses Ring1D;
-AllToAll uses direct exchange. The hardware and per-rank size semantics are below.
-
-`alltoall_runtime.csv`, `alltoall_cycles.csv`, `allreduce_runtime.csv` and
-`allreduce_cycles.csv` contain one row per size. Runtime values are host seconds,
-reported as median/min/max; cycles are simulated collective completion and final
-credit-drain cycles. The simulated clock is 1 ns/cycle. CPU implementation and
-compiler optimizations should preserve cycles, traffic and retirement order.
-`raw.csv` retains each measured run, `metrics.csv` adds traffic, latency, CPU time
-and simulation throughput, and `summary.csv`/`pairs.csv` compare speedups.
-`booksim_opt_pgo_enabled` in the primary CSVs and `pgo_enabled` in raw/metric rows
-explicitly record the optimized setup. The runner rejects missing or changed
-PGO feedback and untrained executables.
-
-Reports update after each completed run. `measurement_complete=False` means a
-row still has fewer than the requested repeats. `progress.json` records completed
-counts, the current condition and a linear ETA from measured seconds/MiB. The ETA
-is an estimate; it never supplies CSV measurements. `manifest.json` records full
-build/source/configuration provenance and final success/failure. Each completed
-run also has a durable JSON checkpoint under `records/`. A missing or mismatching
-result stops the sweep; it is not silently skipped. Resume skips only validated
-checkpoints and rejects changed binaries, configuration or core sources.
-
-Each process gets `max(900, 90 * input_mib)` seconds to accommodate large sizes.
-Successful checkpoints survive timeouts. A lock prevents concurrent sweeps writing
-the same output. Avoid other CPU-intensive work during host-time comparisons.
-
-From the checkout root, with Python 3.10+, GCC/G++, flex and bison installed:
-
-```sh
-python3 experiments/verify_layout.py
-python3 experiments/reproduce.py --variants baseline_o3 opt1to6_final \
-  --algorithms ring1d alltoall --repetitions 1 \
-  --output experiments/results/check_1MiB
-
-python3 experiments/reproduce.py \
-  --variants baseline_o3 baseline_final opt1to5_final opt1to6_final \
-  --algorithms alltoall --repetitions 3 \
-  --output experiments/results/alltoall_1MiB_all_comparisons
-```
-
-Defaults are Ring1D and AllToAll, 1MiB/rank, three repetitions, original O3 versus
-OPT1..6 with the full compiler setup. `--sizes-mib 1 2 4` changes input sizes.
-`--config experiments/collectives/configs/mesh_25GBps_flit32B.cfg` selects the
-original 25GB/s table model. `--cpu`, `--jobs` and `--build-root` control host
-execution/build resources. `--sample` enables optional statistical CPU-domain
-estimates. Ring2D and TTO remain available through explicit `--algorithms` selection.
-
-Each output must be new. Binaries and sources stay unchanged during measurement;
-variant order rotates across repetitions on one pinned CPU. A result contains
-`raw.csv`, available paired comparisons/median `summary.csv`, `manifest.json`,
-configuration, driver snapshots, logs and `report.md`. Single-variant checks have
-no paired summary. Build manifests preserve every source/object/binary SHA,
-command, generated parser and PGO training record.
-
-## Workload and timing definitions
-
-AllToAll's input is the entire send buffer per rank, including the local self
-block. At 1MiB/64 ranks, 1008KiB/rank crosses the network and 16KiB stays local.
-Direct exchange interleaves eligible peer messages at packet boundaries. Ring1D
-uses 63 ReduceScatter and 63 AllGather rounds with actual completion dependencies.
-
-The default hardware is 8x8 Mesh, 1GHz, 16GB/s rate channels, 16B flits, 512B
-packets, 21ns inter-router and 1ns endpoint propagation, four 318-flit private
-VCs, empty-VC admission and packet switch holding. Native IQ routing, arbitration,
-pipeline and credit logic remain in the core; adapters model the explicit links.
-Payload tensors are not transported or reduced numerically in the timed model.
-Packet/block provenance, contributor identities, traffic and credit restoration
-are validated.
-
-Primary timing is `TrafficManager::Run()` wall time: native simulation plus the
-common controller, link adapter, online checks, credit drain and statistics output.
-It excludes setup and final validation. It is not whole-process time or an exact
-isolated BookSim timer. Optional CPU sampling estimates separately describe native,
-controller, link and output domains. Training samples never enter measured medians.
-
-Each run passes native online/final checks. Known 1MiB profiles additionally match
-preserved cycles, traffic, retirement hash and latency/hop statistics. Other sizes
-still get native validation and cross-variant/run comparisons. Report speedup as
-old/new time, and time reduction as 100*(1-new/old); these percentages differ.
-
-## Source separation and historical records
-
-`core_manifest.json` records the upstream `28f4329` source and cleaned optimized
-source. `verify_layout.py` checks it and rejects collective code in core C++.
-Intentional future core changes require reviewing/updating the optimized inventory.
-
-The historical `allreduce/` runners use older snapshots/binaries and retain their
-original provenance. Their old HEAD/overlay and source-preservation assumptions
-are not the active reproduction workflow. A relative compatibility link preserves
-their common-source path. Old performance reports remain tied to their
-recorded source snapshots; cleanup validation is not a new performance claim.
-
-`package.py` exports current sources/configs/references without `.git`,
-binaries, caches, legacy standalone integrations or historical measurement data.
+`package.py` exports the current sources, configurations, and references without
+Git metadata, binaries, caches, or historical measurement data.

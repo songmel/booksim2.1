@@ -19,8 +19,8 @@ AllReduce and AllToAll experiments. Both cores run the same collective workloads
 | `OPT5` | Network evaluation | Skips empty channel `Evaluate()` calls while preserving router evaluation order. |
 | `OPT6` | Compact allocation | Combines compact iSLIP bitmasks (up to 64 inputs and outputs), in-place request updates, and sparse request clearing. |
 
-All six switches are enabled by default and can be controlled individually, for
-example with `make -C booksim-opt/src OPT6=0`.
+All six switches are enabled by default. Experiment builds always enable OPT1–OPT6
+for BookSim Opt and compare it with the original BookSim 2.0 core.
 
 ## Compiler optimizations
 
